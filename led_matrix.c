@@ -72,7 +72,6 @@ void tim2_setup ()
 void TIM2_IRQHandler ()
 {
 	TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt
-	nano_wait(100000000);
 	update_led();
 }
 
@@ -97,27 +96,6 @@ int counter = 0;
 int row_count = 0;
 void update_led()
 {
-    if (counter == 0)
-    {
-        set_color(1, C_R);
-        set_color(2, C_B);
-    }
-    else if (counter == 1)
-    {
-        set_color(1, C_G);
-        set_color(2, C_G);
-    }
-    else if (counter == 2)
-    {
-        set_color(1, C_B);
-        set_color(2, C_R);
-    }
-    else if (counter == 3)
-    {
-        set_color(1, C_OFF);
-        set_color(2, C_OFF);
-    }
-
 	if (counter == 3) // if finished with row
 	{
 		set_bit_c(LED_OE, 0);
