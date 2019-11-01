@@ -84,7 +84,7 @@
 int LFSR(int init);
 int get_piece();
 
-int rng = 0; // determines the
+int rng = 0; //feedback variable for the LSFR
 int get_piece()
 {
     /* PIECES LIST
