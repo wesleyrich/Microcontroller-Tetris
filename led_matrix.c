@@ -9,6 +9,7 @@
 
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
+#include "pieces.h"
 
 
 // PIN NUMBERS IN GPIOC
@@ -42,15 +43,29 @@ void set_row(int row);
 void update_led();
 void set_color(uint8_t channel, uint8_t color);
 void nano_wait(unsigned int n);
+void draw(int x, int y, int color);
 void draw_rect(int x1, int y1, int x2, int y2, uint8_t color);
+void draw_piece(const uint8_t shape [4][4], int x, int y, int color);
 
 
 uint8_t pixels [64][32];
+
+// TETROMINOS
+
+const uint8_t T0[4][4] = {{0,1,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}};
+const uint8_t T1[4][4] = {{0,1,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}};
+const uint8_t T2[4][4] = {{0,0,0,0}, {1,1,1,0}, {0,1,0,0}, {0,0,0,0}};
+const uint8_t T3[4][4] = {{1,0,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}};
 
 void nano_wait(unsigned int n) {
     asm(    "        mov r0,%0\n"
             "repeat: sub r0,#83\n"
             "        bgt repeat\n" : : "r"(n) : "r0", "cc");
+}
+
+void draw(int x, int y, int color)
+{
+	pixels[y][64-x] = color;
 }
 
 void initialize_pixels()
@@ -62,20 +77,23 @@ void initialize_pixels()
 			pixels[i][j] = -1;
 		}
 	}
-	for (int i = 0; i < 32; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			pixels[i + 4 * j + 20][i] = i % 7;
-		}
-	}
-	draw_rect(8,8,12,26,1);
-	draw_rect(16,8,20,26,1);
-	draw_rect(12,14,16,18,1);
-	draw_rect(24,8,28,26,2);
-	draw_rect(32,8,36,18,3);
-	draw_rect(32,22,36,26,3);
+//	for (int i = 0; i < 32; i++)
+//	{
+//		for (int j = 0; j < 4; j++)
+//		{
+//			pixels[i + 4 * j + 20][i] = i % 7;
+//		}
+//	}
 
+	pixels[0][0] = 6;
+	pixels[63][0] = 6;
+	draw_rect(0,0,10,10,6);
+
+	//draw_rect(3,3,23,43,7);
+//	draw_piece(T0, 30, 15, 0);
+//	draw_piece(T1, 22, 15, 0);
+//	draw_piece(T2, 14, 15, 0);
+//	draw_piece(T3, 6, 15, 0);
 }
 
 void LED_pins_setup ()
@@ -204,7 +222,25 @@ void draw_rect(int x1, int y1, int x2, int y2, uint8_t color) // x is column, y 
 	{
 		for (int j = y1; j < y2; j++)
 		{
-			pixels[i][j] = color;
+			draw(i, j, color);
+		}
+	}
+}
+
+void draw_piece(const uint8_t shape[4][4], int x, int y, int color)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+
+			if(shape[i][j] == 1)
+			{
+				draw(2*i + x, 2*j + y, color);
+				draw(2*i + x + 1, 2*j + y, color);
+				draw(2*i + x, 2*j + y + 1, color);
+				draw(2*i + x + 1, 2*j + y + 1, color);
+			}
 		}
 	}
 }
