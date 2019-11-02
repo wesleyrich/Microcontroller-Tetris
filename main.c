@@ -8,10 +8,12 @@
   ******************************************************************************
 */
 
+// LOCKER CODE: 7932
 
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
 #include "stdint.h"
+#include "pieces.h"
 			
 void tim2_setup();
 
