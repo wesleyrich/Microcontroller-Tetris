@@ -5,8 +5,11 @@
  *      Author: Grant, Wesley, Daryl
  */
 
+
+
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
+
 
 // PIN NUMBERS IN GPIOC
 #define LED_OE 0
@@ -33,16 +36,46 @@
 #define C_GB 5
 #define C_RGB 6
 
+int toggle_bit_c(int code);
 void set_bit_c(int code, int state);
 void set_row(int row);
 void update_led();
-void set_color(int channel, int color);
+void set_color(uint8_t channel, uint8_t color);
 void nano_wait(unsigned int n);
+void draw_rect(int x1, int y1, int x2, int y2, uint8_t color);
+
+
+uint8_t pixels [64][32];
 
 void nano_wait(unsigned int n) {
     asm(    "        mov r0,%0\n"
             "repeat: sub r0,#83\n"
             "        bgt repeat\n" : : "r"(n) : "r0", "cc");
+}
+
+void initialize_pixels()
+{
+	for (int i = 0; i < 64; i++)
+	{
+		for (int j = 0; j < 32; j++)
+		{
+			pixels[i][j] = -1;
+		}
+	}
+	for (int i = 0; i < 32; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			pixels[i + 4 * j + 20][i] = i % 7;
+		}
+	}
+	draw_rect(8,8,12,26,1);
+	draw_rect(16,8,20,26,1);
+	draw_rect(12,14,16,18,1);
+	draw_rect(24,8,28,26,2);
+	draw_rect(32,8,36,18,3);
+	draw_rect(32,22,36,26,3);
+
 }
 
 void LED_pins_setup ()
@@ -51,9 +84,9 @@ void LED_pins_setup ()
 	// set pins 0-12 for output
 	GPIOC->MODER &= ~(0x3ffffff);
 	GPIOC->MODER |= (0x1555555);
-	set_bit_c(LED_A, 1);
 	set_bit_c(LED_OE, 0);
-	set_bit_c(LED_CLK, 1);
+	set_bit_c(LED_LAT, 0);
+	set_row(0);
 }
 
 void tim2_setup ()
@@ -61,8 +94,8 @@ void tim2_setup ()
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; // enable clock to tim6
 
 	// set up the clock frequency
-	TIM2->ARR = 9;
-	TIM2->PSC = 23;
+	TIM2->ARR = 10;
+	TIM2->PSC = 10;
 
 	TIM2->DIER |= TIM_DIER_UIE; 		// enable the update interrupt
 	TIM2->CR1 |= TIM_CR1_CEN; 			// enable the timer counter
@@ -72,8 +105,56 @@ void tim2_setup ()
 void TIM2_IRQHandler ()
 {
 	TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt
-	update_led();
+	if (toggle_bit_c(LED_CLK)) // if its on a high clock cycle update the leds
+	{
+		update_led();
+		toggle_bit_c(LED_OE);
+	}
 }
+
+int counter = 0;
+
+void update_led() // reading one bit too many
+{
+
+	if (counter >= (64 * 32 / 2)) // check if cycle is complete
+	{
+		counter = 0;
+		return;
+	}
+
+	int x, y;
+
+	x = counter % 64; // the column
+	y = counter / 64; // the row
+
+	uint8_t color_top = pixels[x][y];
+	uint8_t color_bot = pixels[x][y + 16];
+
+	set_color(1, color_top);
+	set_color(2, color_bot);
+
+	if (x == 63) // we've finished this row, latch and enable.
+	{
+		set_bit_c(LED_LAT, 1);
+		set_bit_c(LED_OE, 1);
+		toggle_bit_c(LED_CLK); // toggle clock
+		set_row(y);
+		toggle_bit_c(LED_CLK); // toggle clock
+		set_bit_c(LED_OE, 0);
+		set_bit_c(LED_LAT, 0);
+	}
+
+	counter++;
+
+}
+
+int toggle_bit_c(int code) // toggles a bit and returns the new state
+{
+	GPIOC->ODR ^= 1 << code; // toggle bit
+	return ((GPIOC->ODR & 1 << code) >> code); // return the new state
+}
+
 
 // Sets a bit in GPIOC based on state. State must be 0 or 1
 void set_bit_c(int code, int state)
@@ -90,31 +171,6 @@ void set_bit_c(int code, int state)
 	{
 		for(;;);
 	}
-}
-
-int counter = 0;
-int row_count = 0;
-void update_led()
-{
-	if (counter == 3) // if finished with row
-	{
-		set_bit_c(LED_OE, 0);
-		set_row(row_count);
-		set_bit_c(LED_LAT, 1); // turn on latch (LAT)
-		counter = 0;
-		if(row_count > 15) row_count = 0;
-		else row_count++;
-		return;
-	}
-	if (counter == 0)
-	{
-		set_bit_c(LED_OE, 1);
-		set_bit_c(LED_LAT, 0); // turn off latch (LAT)
-	}
-
-	//if((GPIOC->ODR & 1 << LED_CLK) == 1 << LED_CLK) GPIOC->ODR ^= 1 << LED_B1;
-	GPIOC->ODR ^= 1 << LED_CLK; // toggle CLK
-	counter++;
 }
 
 void set_row(int row)
@@ -156,23 +212,33 @@ void set_row(int row)
 	}
 }
 
-void set_color(int channel, int color)
+void draw_rect(int x1, int y1, int x2, int y2, uint8_t color) // x is column, y is row
+{
+	for (int i = x1; i < x2; i++)
+	{
+		for (int j = y1; j < y2; j++)
+		{
+			pixels[i][j] = color;
+		}
+	}
+}
+
+void set_color(uint8_t channel, uint8_t color)
 {
 	/* COLOR LIST
 	 * 0 -> RED
 	 * 1 -> BLUE
 	 * 2 -> GREEN
-	 * 3 -> RED/BLUE
-	 * 4 -> RED/GREEN
-	 * 5 -> BLUE/GREEN
-	 * 6 -> RED/BLUE/GREEN
+	 * 3 -> RED/BLUE (Magenta)
+	 * 4 -> RED/GREEN (Yellow)
+	 * 5 -> BLUE/GREEN (Cyan)
+	 * 6 -> RED/BLUE/GREEN (White)
 	 * -1 (or any other int really) -> OFF
 	 *
 	 * CHANNEL
 	 * 1 for R1, B1, G1
 	 * 2 for R2, B2, G2
 	*/
-
     if (channel == 1)
     {
         switch (color)
