@@ -107,7 +107,6 @@ void update_tetris () // game goes in here
 		game_counter++;
 		return;
 	}
-
 }
 
 
