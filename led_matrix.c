@@ -89,44 +89,26 @@ void LED_pins_setup ()
 	set_row(0);
 }
 
-void tim2_setup ()
-{
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; // enable clock to tim6
-
-	// set up the clock frequency
-	TIM2->ARR = 10;
-	TIM2->PSC = 10;
-
-	TIM2->DIER |= TIM_DIER_UIE; 		// enable the update interrupt
-	TIM2->CR1 |= TIM_CR1_CEN; 			// enable the timer counter
-	NVIC->ISER[0] = 1 << TIM2_IRQn; // enable the interrupt
-}
-
-void TIM2_IRQHandler ()
-{
-	TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt
-	if (toggle_bit_c(LED_CLK)) // if its on a high clock cycle update the leds
-	{
-		update_led();
-		toggle_bit_c(LED_OE);
-	}
-}
-
-int counter = 0;
+int led_counter = 0;
 
 void update_led() // reading one bit too many
 {
 
-	if (counter >= (64 * 32 / 2)) // check if cycle is complete
+	if (!toggle_bit_c(LED_CLK)) // if its on a high clock cycle update the leds
 	{
-		counter = 0;
+		return;
+	}
+
+	if (led_counter >= (64 * 32 / 2)) // check if cycle is complete
+	{
+		led_counter = 0;
 		return;
 	}
 
 	int x, y;
 
-	x = counter % 64; // the column
-	y = counter / 64; // the row
+	x = led_counter % 64; // the column
+	y = led_counter / 64; // the row
 
 	uint8_t color_top = pixels[x][y];
 	uint8_t color_bot = pixels[x][y + 16];
@@ -138,14 +120,18 @@ void update_led() // reading one bit too many
 	{
 		set_bit_c(LED_LAT, 1);
 		set_bit_c(LED_OE, 1);
+
 		toggle_bit_c(LED_CLK); // toggle clock
+
 		set_row(y);
+
 		toggle_bit_c(LED_CLK); // toggle clock
+
 		set_bit_c(LED_OE, 0);
 		set_bit_c(LED_LAT, 0);
 	}
 
-	counter++;
+	led_counter++;
 
 }
 
