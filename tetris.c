@@ -81,8 +81,35 @@
  *
  */
 
+#define TIM2_FREQ 12000000 // must be the same as in main.c
+
 int LFSR(int init);
 int get_piece();
+void update_tetris();
+void initialize_game();
+
+const uint8_t framerate_by_level [] = {48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 4, 3, 2, 1};
+uint8_t level = 0;
+
+void initialize_game () // stuff to do at startup
+{
+
+}
+
+
+int count_to = (TIM2_FREQ / 48);
+int game_counter = 0;
+
+void update_tetris () // game goes in here
+{
+	if (game_counter < count_to)
+	{
+		game_counter++;
+		return;
+	}
+
+}
+
 
 int rng = 0; //feedback variable for the LSFR
 int get_piece()
@@ -162,8 +189,8 @@ int get_piece()
     // **note that this does make certain orientations slightly more likely than
     // others but I'm too tired to care right now**
     if(piece == 15) piece--;
-    if(piece == 11 | piece == 14 | piece == 19 | piece == 27) piece--;
-    if(piece == 10 | piece == 13 | piece == 18 | piece == 26) piece--;
+    if(piece == 11 || piece == 14 || piece == 19 || piece == 27) piece--;
+    if(piece == 10 || piece == 13 || piece == 18 || piece == 26) piece--;
 
     return(piece);
 }
