@@ -81,14 +81,14 @@
  *
  */
 
-#define TIM2_FREQ 12000000 // must be the same as in main.c
+#define TIM2_FREQ 500000 // must be the same as in main.c
 
 int LFSR(int init);
 int get_piece();
 void update_tetris();
 void initialize_game();
 
-const uint8_t framerate_by_level [] = {48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 4, 3, 2, 1};
+const uint8_t gravity [] = {48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 4, 3, 2, 1};
 uint8_t level = 0;
 
 void initialize_game () // stuff to do at startup
@@ -97,15 +97,22 @@ void initialize_game () // stuff to do at startup
 }
 
 
-int count_to = (TIM2_FREQ / 48);
+int count_to = (TIM2_FREQ / 120);
 int game_counter = 0;
-
+int x = 0;
 void update_tetris () // game goes in here
 {
 	if (game_counter < count_to)
 	{
 		game_counter++;
 		return;
+	}
+	game_counter = 0;
+
+	x++;
+	if(x > 60)
+	{
+	    x = 0;
 	}
 }
 
