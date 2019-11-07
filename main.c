@@ -13,11 +13,11 @@
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
 #include "stdint.h"
-#include "pieces.h"
+//#include "pieces.h"
 			
 void tim2_setup();
 
-#define TIM2_FREQ 12000000 // 12 MHz
+#define TIM2_FREQ 500000 // 12 MHz
 
 int main(void)
 {
@@ -33,7 +33,7 @@ void tim2_setup ()
 
 	// set up the clock frequency
 	TIM2->ARR = 1;
-	TIM2->PSC = (int)(24000000 / TIM2_FREQ) - 1; //assuming ARR is '1'
+	TIM2->PSC = (int)(48000000 / TIM2_FREQ / 2) - 1; //assuming ARR is '1'
 
 	TIM2->DIER |= TIM_DIER_UIE; 		// enable the update interrupt
 	TIM2->CR1 |= TIM_CR1_CEN; 			// enable the timer counter
@@ -44,9 +44,9 @@ void TIM2_IRQHandler ()
 {
 	TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt
 
-	update_led();			 // update the led matrix
+	update_led(); // update the led matrix
 
-	update_tetris();		 // update the game
+	update_tetris(); // update the game
 }
 
 
