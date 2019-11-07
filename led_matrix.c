@@ -48,14 +48,54 @@ void draw_rect(int x1, int y1, int x2, int y2, uint8_t color);
 void draw_piece(const uint8_t shape [4][4], int x, int y, int color);
 
 
-uint8_t pixels [64][32];
+uint8_t pixels [32][64]; // x are the columns, y are the rows
 
 // TETROMINOS
 
-const uint8_t T0[4][4] = {{0,1,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}};
-const uint8_t T1[4][4] = {{0,1,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}};
-const uint8_t T2[4][4] = {{0,0,0,0}, {1,1,1,0}, {0,1,0,0}, {0,0,0,0}};
-const uint8_t T3[4][4] = {{1,0,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}};
+//top left pixel is start goes from top row to bottom row, 0 2x2 is on right
+
+//I
+const uint8_t I0[4][4] = {{1,1,1,1}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations I
+const uint8_t I1[4][4] = {{1,0,0,0}, {1,0,0,0}, {1,0,0,0}, {1,0,0,0}}; //1 rotations I
+const uint8_t I2[4][4] = {{1,1,1,1}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations I
+const uint8_t I3[4][4] = {{1,0,0,0}, {1,0,0,0}, {1,0,0,0}, {1,0,0,0}}; //3 rotations I
+
+//T
+const uint8_t T0[4][4] = {{1,1,1,0}, {0,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotation T
+const uint8_t T1[4][4] = {{0,1,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}}; //1 rotation T
+const uint8_t T2[4][4] = {{0,1,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations T
+const uint8_t T3[4][4] = {{1,0,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //3 rotations T
+
+//0
+const uint8_t O0[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations O
+const uint8_t O1[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //1 rotations O
+const uint8_t O2[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations O
+const uint8_t O3[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //3 rotations O
+
+//l
+const uint8_t L0[4][4] = {{1,1,1,0}, {1,0,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations l
+const uint8_t L1[4][4] = {{1,1,0,0}, {0,1,0,0}, {0,1,0,0}, {0,1,0,0}}; //1 rotations l
+const uint8_t L2[4][4] = {{0,0,1,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations l
+const uint8_t L3[4][4] = {{1,0,0,0}, {1,0,0,0}, {1,1,0,0}, {0,0,0,0}}; //3 rotations l
+
+//j
+const uint8_t J0[4][4] = {{1,1,1,0}, {0,0,1,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations j
+const uint8_t J1[4][4] = {{0,1,0,0}, {0,1,0,0}, {1,1,0,0}, {0,0,0,0}}; //1 rotations j
+const uint8_t J2[4][4] = {{1,0,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations j
+const uint8_t J3[4][4] = {{1,1,0,0}, {1,0,0,0}, {1,0,0,0}, {0,0,0,0}}; //3 rotations j
+
+//z
+const uint8_t Z0[4][4] = {{1,1,0,0}, {0,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations z
+const uint8_t Z1[4][4] = {{0,1,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //1 rotations z
+const uint8_t Z2[4][4] = {{1,1,0,0}, {0,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations z
+const uint8_t Z3[4][4] = {{0,1,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //3 rotations z
+
+//z
+const uint8_t S0[4][4] = {{0,1,1,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations s
+const uint8_t S1[4][4] = {{1,0,0,0}, {1,1,0,0}, {0,0,1,0}, {0,0,0,0}}; //1 rotations s
+const uint8_t S2[4][4] = {{0,1,1,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations s
+const uint8_t S3[4][4] = {{1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}}; //3 rotations s
+
 
 void nano_wait(unsigned int n) {
     asm(    "        mov r0,%0\n"
@@ -65,14 +105,14 @@ void nano_wait(unsigned int n) {
 
 void draw(int x, int y, int color)
 {
-	pixels[y][64-x] = color;
+	pixels[x][y] = color;
 }
 
 void initialize_pixels()
 {
-	for (int i = 0; i < 64; i++)
+	for (int i = 0; i < 32; i++)
 	{
-		for (int j = 0; j < 32; j++)
+		for (int j = 0; j < 64; j++)
 		{
 			pixels[i][j] = -1;
 		}
@@ -84,16 +124,131 @@ void initialize_pixels()
 //			pixels[i + 4 * j + 20][i] = i % 7;
 //		}
 //	}
+	for (int i = 0; i < 64; i++)
+	{
+		for (int j = 0; j < 32; j++)
+		{
+			draw(j,i,-1);
+		}
+	}
 
-	pixels[0][0] = 6;
-	pixels[63][0] = 6;
-	draw_rect(0,0,10,10,6);
+	// draw the border
+	draw_rect(0,14,22,55,6);
+	draw_rect(1,15,21,54,7);
+	// draw tetris
+	// T
+	draw_rect(2,62,6,62,0);
+	draw_rect(4,58,4,61,0);
+	// E
+	draw_rect(9,62,11,62,4);
+	draw_rect(9,60,10,60,4);
+	draw_rect(9,58,11,58,4);
+	draw_rect(8,58,8,62,4);
+	// T
+	draw_rect(13,62,17,62,2);
+	draw_rect(15,58,15,61,2);
+	// R
+	draw_rect(19,62,22,62,5);
+	draw_rect(19,58,19,61,5);
+	draw(22,61,5);
+	draw_rect(19,60,22,60,5);
+	draw(21,59,5);
+	draw(22,58,5);
+	// I
+	draw_rect(24,58,24,62,1);
+	// S
+	draw_rect(26,62,29,62,3);
+	draw_rect(26,60,26,61,3);
+	draw_rect(27,60,29,60,3);
+	draw_rect(29,58,29,59,3);
+	draw_rect(26,58,28,58,3);
 
-	//draw_rect(3,3,23,43,7);
-//	draw_piece(T0, 30, 15, 0);
-//	draw_piece(T1, 22, 15, 0);
-//	draw_piece(T2, 14, 15, 0);
-//	draw_piece(T3, 6, 15, 0);
+//	switch(pieceNum)
+//	{
+//		case 0:
+//			draw_piece(I0,1,54,1);
+//			break;
+//		case 1:
+//			draw_piece(I1,1,54,1);
+//			break;
+//		case 2:
+//			draw_piece(I2,1,54,1);
+//			break;
+//		case 3:
+//			draw_piece(I3,1,54,1);
+//			break;
+//		case 4:
+//			draw_piece(Z0,1,54,1);
+//			break;
+//		case 5:
+//			draw_piece(Z1,1,54,1);
+//			break;
+//		case 6:
+//			draw_piece(Z2,1,54,1);
+//			break;
+//		case 7:
+//			draw_piece(Z3,1,54,1);
+//			break;
+//		case 8:
+//			draw_piece(T0,1,54,1);
+//			break;
+//		case 9:
+//			draw_piece(T1,1,54,1);
+//			break;
+//		case 10:
+//			draw_piece(T2,1,54,1);
+//			break;
+//		case 11:
+//			draw_piece(T3,1,54,1);
+//			break;
+//		case 12:
+//			draw_piece(L0,1,54,1);
+//			break;
+//		case 13:
+//			draw_piece(L1,1,54,1);
+//			break;
+//		case 14:
+//			draw_piece(L2,1,54,1);
+//			break;
+//		case 15:
+//			draw_piece(L3,1,54,1);
+//			break;
+//		case 16:
+//			draw_piece(J0,1,54,1);
+//			break;
+//		case 17:
+//			draw_piece(J1,1,54,1);
+//			break;
+//		case 18:
+//			draw_piece(J2,1,54,1);
+//			break;
+//		case 19:
+//			draw_piece(J3,1,54,1);
+//			break;
+//		case 20:
+//			draw_piece(O0,1,54,1);
+//			break;
+//		case 21:
+//			draw_piece(O1,1,54,1);
+//			break;
+//		case 22:
+//			draw_piece(O2,1,54,1);
+//			break;
+//		case 23:
+//			draw_piece(O3,1,54,1);
+//			break;
+//		case 24:
+//			draw_piece(S0,1,54,1);
+//			break;
+//		case 25:
+//			draw_piece(S1,1,54,1);
+//			break;
+//		case 26:
+//			draw_piece(S2,1,54,1);
+//			break;
+//		case 27:
+//			draw_piece(S3,1,54,1);
+//	}
 }
 
 void LED_pins_setup ()
@@ -125,23 +280,23 @@ void update_led() // reading one bit too many
 
 	int x, y;
 
-	x = led_counter % 64; // the column
-	y = led_counter / 64; // the row
+	x = led_counter / 64; // the column
+	y = led_counter % 64; // the row
 
 	uint8_t color_top = pixels[x][y];
-	uint8_t color_bot = pixels[x][y + 16];
+	uint8_t color_bot = pixels[x+16][y];
 
 	set_color(1, color_top);
 	set_color(2, color_bot);
 
-	if (x == 63) // we've finished this row, latch and enable.
+	if (y == 63) // we've finished this row, latch and enable.
 	{
 		set_bit_c(LED_LAT, 1);
 		set_bit_c(LED_OE, 1);
 
 		toggle_bit_c(LED_CLK); // toggle clock
 
-		set_row(y);
+		set_row(x);
 
 		toggle_bit_c(LED_CLK); // toggle clock
 
@@ -218,9 +373,9 @@ void set_row(int row)
 
 void draw_rect(int x1, int y1, int x2, int y2, uint8_t color) // x is column, y is row
 {
-	for (int i = x1; i < x2; i++)
+	for (int i = x1; i <= x2; i++)
 	{
-		for (int j = y1; j < y2; j++)
+		for (int j = y1; j <= y2; j++)
 		{
 			draw(i, j, color);
 		}
@@ -236,10 +391,11 @@ void draw_piece(const uint8_t shape[4][4], int x, int y, int color)
 
 			if(shape[i][j] == 1)
 			{
-				draw(2*i + x, 2*j + y, color);
-				draw(2*i + x + 1, 2*j + y, color);
-				draw(2*i + x, 2*j + y + 1, color);
-				draw(2*i + x + 1, 2*j + y + 1, color);
+				draw(2*j + x, -2*i + y, color);
+				draw(2*j + x + 1, -2*i + y, color);
+				draw(2*j + x, -2*i + y - 1, color);
+				draw(2*j + x + 1, -2*i + y - 1, color);
+
 			}
 		}
 	}
