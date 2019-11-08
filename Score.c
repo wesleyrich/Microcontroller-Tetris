@@ -37,3 +37,23 @@ void initialize_numbers ()
     draw_rect(8,8,10,8,6);
     draw_rect(8,8,8,10,6);
 }
+
+void draw_number(const uint8_t shape[4][5], int x, int y, int color)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+
+            if(shape[i][j] == 1)
+            {
+                draw(2*j + x, -2*i + y, color);
+                draw(2*j + x + 1, -2*i + y, color);
+                draw(2*j + x, -2*i + y - 1, color);
+                draw(2*j + x + 1, -2*i + y - 1, color);
+
+            }
+        }
+    }
+}
+
