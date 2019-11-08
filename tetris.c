@@ -130,8 +130,8 @@ void update_tetris () // game goes in here
 	if (game_counter_2 > count_to_2)
 	{
 	    game_counter_2 = 0;
-	    draw_piece(L2, 10,-(x * 2 % 40) + 54,-1);
-	    draw_piece(L2, 10,-(x * 2 % 40) + 52,0);
+//	    draw_piece(L2, 10,-(x * 2 % 40) + 54,-1);
+//	    draw_piece(L2, 10,-(x * 2 % 40) + 52,0);
 	    x++;
 	    if (x > 40) x = 0;
 	}

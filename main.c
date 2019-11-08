@@ -17,6 +17,7 @@
 #include "led_matrix.h"
 #include "tetris.h"
 #include "pieces.h"
+#include "Score.h"
 
 //#include "pieces.h"
 			
@@ -28,6 +29,7 @@ int main(void)
 {
 	LED_pins_setup();
 	initialize_pixels();
+	initialize_symbols();
 	tim2_setup();
 	for(;;);
 }

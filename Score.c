@@ -17,5 +17,23 @@ void initialize_symbols ()
     draw_rect(1,10,5,10,6);
     draw_rect(3,8,3,9,6);
 
+    draw(3,6,4);
+    draw_rect(1,5,5,5,4);
+    draw_rect(2,4,4,4,4);
+    draw_rect(2,3,4,3,4);
+    draw_rect(1,2,2,2,4);
+    draw_rect(4,2,5,2,4);
 
+    draw_rect(7,12,10,12,6);
+    draw_rect(7,8,7,11,6);
+    draw_rect(8,8,10,8,6);
+    draw_rect(10,8,10,11,6);
+}
+
+void initialize_numbers ()
+{
+    draw_rect(7,12,10,12,6);
+    draw_rect(7,8,7,11,6);
+    draw_rect(8,8,10,8,6);
+    draw_rect(8,8,8,10,6);
 }
