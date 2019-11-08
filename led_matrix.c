@@ -5,97 +5,14 @@
  *      Author: Grant, Wesley, Daryl
  */
 
-
-
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
+#include "constants.h"
+#include "led_matrix.h"
+#include "tetris.h"
 #include "pieces.h"
 
-
-// PIN NUMBERS IN GPIOC
-#define LED_OE 0
-#define LED_CLK 1
-#define LED_C 2
-#define LED_A 3
-#define LED_B2 4
-#define LED_R2 5
-#define LED_B1 6
-#define LED_R1 7
-#define LED_LAT 8
-#define LED_D 9
-#define LED_B 10
-#define LED_G2 11
-#define LED_G1 12
-
-// COLORS
-#define C_OFF -1
-#define C_R 0
-#define C_B 1
-#define C_G 2
-#define C_RB 3
-#define C_RG 4
-#define C_GB 5
-#define C_RGB 6
-
-int toggle_bit_c(int code);
-void set_bit_c(int code, int state);
-void set_row(int row);
-void update_led();
-void set_color(uint8_t channel, uint8_t color);
-void nano_wait(unsigned int n);
-void draw(int x, int y, int color);
-void draw_rect(int x1, int y1, int x2, int y2, uint8_t color);
-void draw_piece(const uint8_t shape [4][4], int x, int y, int color);
-
-
 uint8_t pixels [32][64]; // x are the columns, y are the rows
-
-// TETROMINOS
-
-//top left pixel is start goes from top row to bottom row, 0 2x2 is on right
-
-//I
-const uint8_t I0[4][4] = {{1,1,1,1}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations I
-const uint8_t I1[4][4] = {{1,0,0,0}, {1,0,0,0}, {1,0,0,0}, {1,0,0,0}}; //1 rotations I
-const uint8_t I2[4][4] = {{1,1,1,1}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations I
-const uint8_t I3[4][4] = {{1,0,0,0}, {1,0,0,0}, {1,0,0,0}, {1,0,0,0}}; //3 rotations I
-
-//T
-const uint8_t T0[4][4] = {{1,1,1,0}, {0,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotation T
-const uint8_t T1[4][4] = {{0,1,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}}; //1 rotation T
-const uint8_t T2[4][4] = {{0,1,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations T
-const uint8_t T3[4][4] = {{1,0,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //3 rotations T
-
-//0
-const uint8_t O0[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations O
-const uint8_t O1[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //1 rotations O
-const uint8_t O2[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations O
-const uint8_t O3[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //3 rotations O
-
-//l
-const uint8_t L0[4][4] = {{1,1,1,0}, {1,0,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations l
-const uint8_t L1[4][4] = {{1,1,0,0}, {0,1,0,0}, {0,1,0,0}, {0,1,0,0}}; //1 rotations l
-const uint8_t L2[4][4] = {{0,0,1,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations l
-const uint8_t L3[4][4] = {{1,0,0,0}, {1,0,0,0}, {1,1,0,0}, {0,0,0,0}}; //3 rotations l
-
-//j
-const uint8_t J0[4][4] = {{1,1,1,0}, {0,0,1,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations j
-const uint8_t J1[4][4] = {{0,1,0,0}, {0,1,0,0}, {1,1,0,0}, {0,0,0,0}}; //1 rotations j
-const uint8_t J2[4][4] = {{1,0,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations j
-const uint8_t J3[4][4] = {{1,1,0,0}, {1,0,0,0}, {1,0,0,0}, {0,0,0,0}}; //3 rotations j
-
-//z
-const uint8_t Z0[4][4] = {{1,1,0,0}, {0,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations z
-const uint8_t Z1[4][4] = {{0,1,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //1 rotations z
-const uint8_t Z2[4][4] = {{1,1,0,0}, {0,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations z
-const uint8_t Z3[4][4] = {{0,1,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //3 rotations z
-
-//z
-const uint8_t S0[4][4] = {{0,1,1,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations s
-const uint8_t S1[4][4] = {{1,0,0,0}, {1,1,0,0}, {0,0,1,0}, {0,0,0,0}}; //1 rotations s
-const uint8_t S2[4][4] = {{0,1,1,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations s
-const uint8_t S3[4][4] = {{1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}}; //3 rotations s
-
 
 void nano_wait(unsigned int n) {
     asm(    "        mov r0,%0\n"
@@ -110,20 +27,7 @@ void draw(int x, int y, int color)
 
 void initialize_pixels()
 {
-	for (int i = 0; i < 32; i++)
-	{
-		for (int j = 0; j < 64; j++)
-		{
-			pixels[i][j] = -1;
-		}
-	}
-//	for (int i = 0; i < 32; i++)
-//	{
-//		for (int j = 0; j < 4; j++)
-//		{
-//			pixels[i + 4 * j + 20][i] = i % 7;
-//		}
-//	}
+
 	for (int i = 0; i < 64; i++)
 	{
 		for (int j = 0; j < 32; j++)
@@ -272,7 +176,7 @@ void update_led() // reading one bit too many
 		return;
 	}
 
-	if (led_counter >= (64 * 32 / 2)) // check if cycle is complete
+	if (led_counter >= (1024)) // check if cycle is complete
 	{
 		led_counter = 0;
 		return;

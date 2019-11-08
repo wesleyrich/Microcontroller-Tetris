@@ -7,6 +7,11 @@
 
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
+#include "constants.h"
+#include "led_matrix.h"
+#include "tetris.h"
+#include "pieces.h"
+
 
 /*
  * GENERAL NOTES
@@ -47,8 +52,8 @@
  *      10–12   5
  *      13–15   4
  *      16–18   3
- *      19–28   2
- *      29+     1
+ *      19–28   2int x = 0;
+ *      29+       TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt  1
  *
  *   - Will increase level by 1 for every 10 line clears
  *
@@ -73,33 +78,46 @@
  *
  * Tetromino Rotation:
  *
- * Collision Testing:
- *
+ * Collision Testing:int LFSR(int init);
+int get_piece();
+void update_tetris();
+void initialize_game();
+ *000
  * Clearing Lines:
  *
  * Scoring:
  *
  */
 
-#define TIM2_FREQ 500000 // must be the same as in main.c
+#define LAG_FACTOR 0.27   // reduce frames to count to by this factor (ie LAG_FACTOR = 0.1 reduces frames to count by 10%)
 
-int LFSR(int init);
-int get_piece();
-void update_tetris();
-void initialize_game();
+// Holds all the shapes
+uint8_t * shapes[28];
+
+
+
 
 const uint8_t gravity [] = {48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 4, 3, 2, 1};
 uint8_t level = 0;
 
 void initialize_game () // stuff to do at startup
 {
+    //= I0, I1, I2, I3, T0, T1, T2, T3, O0, O1, O2, O3, L0, L1, L2, L3, J0, J1, J2, J3, Z0, Z1, Z2, Z3, S0, S1, S2, S3
+    shapes[0] = I0;
+    shapes[1] = I1;
+    shapes[2] = I2;
+    shapes[3] = I3;
+    /// NEED TO FINISH THIS!!
 
 }
 
 
-int count_to = (TIM2_FREQ / 120);
+int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
+int count_to_2 = 48;
 int game_counter = 0;
+int game_counter_2 = 0;
 int x = 0;
+
 void update_tetris () // game goes in here
 {
 	if (game_counter < count_to)
@@ -107,13 +125,17 @@ void update_tetris () // game goes in here
 		game_counter++;
 		return;
 	}
-	game_counter = 0;
+	game_counter_2++;
 
-	x++;
-	if(x > 60)
+	if (game_counter_2 > count_to_2)
 	{
-	    x = 0;
+	    game_counter_2 = 0;
+	    draw_piece(L2, 10,-(x * 2 % 40) + 54,-1);
+	    draw_piece(L2, 10,-(x * 2 % 40) + 52,0);
+	    x++;
+	    if (x > 40) x = 0;
 	}
+    game_counter = 0;
 }
 
 

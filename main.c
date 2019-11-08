@@ -13,11 +13,16 @@
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
 #include "stdint.h"
+#include "constants.h"
+#include "led_matrix.h"
+#include "tetris.h"
+#include "pieces.h"
+
 //#include "pieces.h"
 			
 void tim2_setup();
 
-#define TIM2_FREQ 500000 // 12 MHz
+
 
 int main(void)
 {
@@ -42,11 +47,13 @@ void tim2_setup ()
 
 void TIM2_IRQHandler ()
 {
-	TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt
+
+    TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt
 
 	update_led(); // update the led matrix
 
-	update_tetris(); // update the game
+    update_tetris(); // update the game
+
 }
 
 
