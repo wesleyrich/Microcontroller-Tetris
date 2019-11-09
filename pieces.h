@@ -10,8 +10,8 @@
 
 struct Piece
 {
-    int x, y, color;
-    uint8_t shape [4][4];
+    int x, y, color, isActive;
+    uint8_t ** shape;
 };
 
 #endif /* PIECES_H_ */

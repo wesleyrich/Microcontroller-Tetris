@@ -12,5 +12,7 @@ int LFSR(int init);
 int get_piece();
 void update_tetris();
 void initialize_game();
+void update_piece();
+void spawn_piece();
 
 #endif /* TETRIS_H_ */

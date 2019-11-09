@@ -30,6 +30,7 @@ int main(void)
 	LED_pins_setup();
 	initialize_pixels();
 	initialize_symbols();
+	initialize_game();
 	tim2_setup();
 	for(;;);
 }

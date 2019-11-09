@@ -98,129 +98,132 @@ uint8_t * shapes[28];
 
 
 const uint8_t gravity [] = {48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 4, 3, 2, 1};
+uint8_t * piece_dictionary [28];
 uint8_t level = 0;
+struct Piece piece;
+uint8_t prev_piece = 0;
+int rng = 0; //feedback variable for the LSFR
 
 void initialize_game () // stuff to do at startup
 {
-    //= I0, I1, I2, I3, T0, T1, T2, T3, O0, O1, O2, O3, L0, L1, L2, L3, J0, J1, J2, J3, Z0, Z1, Z2, Z3, S0, S1, S2, S3
-    shapes[0] = I0;
-    shapes[1] = I1;
-    shapes[2] = I2;
-    shapes[3] = I3;
-    /// NEED TO FINISH THIS!!
-
+    piece_dictionary[0] = *I0;
+    piece_dictionary[1] = *I1;
+    piece_dictionary[2] = *I2;
+    piece_dictionary[3] = *I3;
+    piece_dictionary[4] = *T0;
+    piece_dictionary[5] = *T1;
+    piece_dictionary[6] = *T2;
+    piece_dictionary[7] = *T3;
+    piece_dictionary[8] = *O0;
+    piece_dictionary[9] = *O1;
+    piece_dictionary[10] = *O2;
+    piece_dictionary[11] = *O3;
+    piece_dictionary[12] = *L0;
+    piece_dictionary[13] = *L1;
+    piece_dictionary[14] = *L2;
+    piece_dictionary[15] = *L3;
+    piece_dictionary[16] = *J0;
+    piece_dictionary[17] = *J1;
+    piece_dictionary[18] = *J2;
+    piece_dictionary[19] = *J3;
+    piece_dictionary[20] = *Z0;
+    piece_dictionary[21] = *Z1;
+    piece_dictionary[22] = *Z2;
+    piece_dictionary[23] = *Z3;
+    piece_dictionary[24] = *L0;
+    piece_dictionary[25] = *L1;
+    piece_dictionary[26] = *L2;
+    piece_dictionary[27] = *L3;
+    rng = LFSR(175321);
+    spawn_piece();
 }
 
-
 int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
-int count_to_2 = 48;
+int count_to_2 = 4;
 int game_counter = 0;
 int game_counter_2 = 0;
-int x = 0;
 
 void update_tetris () // game goes in here
 {
 	if (game_counter < count_to)
 	{
 		game_counter++;
+		rng = LFSR(rng);
 		return;
 	}
-	game_counter_2++;
-
-	if (game_counter_2 > count_to_2)
-	{
-	    game_counter_2 = 0;
-//	    draw_piece(L2, 10,-(x * 2 % 40) + 54,-1);
-//	    draw_piece(L2, 10,-(x * 2 % 40) + 52,0);
-	    x++;
-	    if (x > 40) x = 0;
-	}
     game_counter = 0;
+
+	if (game_counter_2 < count_to_2)
+	{
+	    game_counter_2++;
+	    return;
+	}
+	// do a frame
+	update_piece();
+	game_counter_2 = 0;
 }
 
+void update_piece()
+{
+    draw_piece(piece.shape, piece.x, piece.y, -1);
+    if (check_collision_y(piece.shape))
+    {
+        draw_piece(piece.shape, piece.x, piece.y, piece.color);
+        spawn_piece();
+        return;
+    }
+    piece.y -= 2;
+    draw_piece(piece.shape, piece.x, piece.y, piece.color);
+}
 
-int rng = 0; //feedback variable for the LSFR
+void spawn_piece()
+{
+    piece.x = 9;
+    piece.y = 54;
+    int num = get_piece();
+    piece.color = (int)(num / 4);
+    piece.shape = (piece_dictionary[num]);
+    draw_piece(piece.shape, piece.x, piece.y, piece.color);
+}
+
+int check_collision_y(uint8_t shape [4][4]) // will return a 1 if there is a collision with any other pixels
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            int k = getPixels(piece.x+(2*j),piece.y-(2*i) - 2);
+            if (shape[i][j] == 1 && (k >= 0  && k < 7))
+            {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int check_collision_xpos()
+{
+
+}
+
+int check_collision_xneg()
+{
+
+}
+
 int get_piece()
 {
-    /* PIECES LIST
-     * (Each piece will be represented by 4 values, 1 for each orientation)
-     *
-     * T -> 0: 00000  1: 00000  2: 00000  3: 00000
-     *         00100     00100     00000     00100
-     *         01110     00110     01110     01100
-     *         00000     00100     00100     00100
-     *         00000     00000     00000     00000
-     *
-     * J -> 4: 00000  5: 00000  6: 00000  7: 00000
-     *         00100     01000     00110     00000
-     *         00100     01110     00100     01110
-     *         01100     00000     00100     00010
-     *         00000     00000     00000     00000
-     *
-     * Z -> 8: 00000  9: 00000 10: xxxxx 11: xxxxx
-     *         00000     00010     xxxxx     xxxxx
-     *         01100     00110     xxxxx     xxxxx
-     *         00110     00100     xxxxx     xxxxx
-     *         00000     00000     xxxxx     xxxxx
-     *
-     * O ->12: 00000 13: xxxxx 14: xxxxx 15: xxxxx
-     *         00000     xxxxx     xxxxx     xxxxx
-     *         01100     xxxxx     xxxxx     xxxxx
-     *         01100     xxxxx     xxxxx     xxxxx
-     *         00000     xxxxx     xxxxx     xxxxx
-     *
-     * S ->16: 00000 17: 00000 18: xxxxx 19: xxxxx
-     *         00000     00100     xxxxx     xxxxx
-     *         00110     00110     xxxxx     xxxxx
-     *         01100     00010     xxxxx     xxxxx
-     *         00000     00000     xxxxx     xxxxx
-     *
-     * L ->20: 00000 21: 00000 22: 00000 23: 00000
-     *         00100     00000     01100     00010
-     *         00100     01110     00100     01110
-     *         00110     01000     00100     00000
-     *         00000     00000     00000     00000
-     *
-     * I ->24: 00100 25: 00000 26: xxxxx 27: xxxxx
-     *         00100     00000     xxxxx     xxxxx
-     *         00100     00000     xxxxx     xxxxx
-     *         00100     11110     xxxxx     xxxxx
-     *         00000     00000     xxxxx     xxxxx
-     */
-    uint8_t piece_mask = 0b111;
-    uint8_t orient_mask = 0b11000;
-    uint8_t piece = 0; //representing our tetromino
-    uint8_t prev_piece = 7;
-    uint8_t orient = 0;
+    uint8_t p = rng % 28; //representing our tetromino
 
-    //THIS WILL NEED TO BE IN MAIN (below two lines)
-    int seed = 0b1001011010100111;
-    rng = LFSR(seed);
-
-    rng = LFSR(rng);
-    piece = piece_mask & rng;
-    while(piece == prev_piece || piece == 7)
+    while(p == prev_piece)
     {
         rng = LFSR(rng);
-        piece = piece_mask & rng;
+        p = rng % 28;
     }
-    prev_piece = piece;
+    prev_piece = p;
 
-    orient = orient_mask & rng;
-    orient = orient >> 3;
-
-    // transforming into one of the above codes
-    piece *= 4;
-    piece += orient;
-
-    // removing non-existent orientations
-    // **note that this does make certain orientations slightly more likely than
-    // others but I'm too tired to care right now**
-    if(piece == 15) piece--;
-    if(piece == 11 || piece == 14 || piece == 19 || piece == 27) piece--;
-    if(piece == 10 || piece == 13 || piece == 18 || piece == 26) piece--;
-
-    return(piece);
+    return(p);
 }
 
 int LFSR(int init)

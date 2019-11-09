@@ -18,7 +18,8 @@ void draw(int x, int y, int color);
 void draw_rect(int x1, int y1, int x2, int y2, uint8_t color);
 void initialize_pixels();
 void LED_pins_setup ();
-void draw_piece(const uint8_t shape [4][4], int x, int y, int color);
+int getPixels (int x, int y);
+void draw_piece(uint8_t shape [4][4], int x, int y, int color);
 
 
 #endif /* LED_MATRIX_H_ */

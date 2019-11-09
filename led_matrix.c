@@ -20,6 +20,11 @@ void nano_wait(unsigned int n) {
             "        bgt repeat\n" : : "r"(n) : "r0", "cc");
 }
 
+int getPixels (int x, int y)
+{
+    return pixels[x][y];
+}
+
 void draw(int x, int y, int color)
 {
 	pixels[x][y] = color;
@@ -286,7 +291,7 @@ void draw_rect(int x1, int y1, int x2, int y2, uint8_t color) // x is column, y 
 	}
 }
 
-void draw_piece(const uint8_t shape[4][4], int x, int y, int color)
+void draw_piece(uint8_t shape[4][4], int x, int y, int color)
 {
 	for (int i = 0; i < 4; i++)
 	{
