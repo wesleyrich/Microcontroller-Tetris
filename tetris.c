@@ -103,6 +103,7 @@ uint8_t level = 0;
 struct Piece piece;
 uint8_t prev_piece = 0;
 int rng = 0; //feedback variable for the LSFR
+int game_active = 0;
 
 void initialize_game () // stuff to do at startup
 {
@@ -130,18 +131,20 @@ void initialize_game () // stuff to do at startup
     piece_dictionary[21] = *Z1;
     piece_dictionary[22] = *Z2;
     piece_dictionary[23] = *Z3;
-    piece_dictionary[24] = *L0;
-    piece_dictionary[25] = *L1;
-    piece_dictionary[26] = *L2;
-    piece_dictionary[27] = *L3;
+    piece_dictionary[24] = *S0;
+    piece_dictionary[25] = *S1;
+    piece_dictionary[26] = *S2;
+    piece_dictionary[27] = *S3;
     rng = LFSR(7452);
     spawn_piece();
+    game_active = 1;
 }
 
 int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
 int count_to_2 = 4;
 int game_counter = 0;
 int game_counter_2 = 0;
+
 
 void update_tetris () // game goes in here
 {
@@ -159,6 +162,10 @@ void update_tetris () // game goes in here
 	    return;
 	}
 	// do a frame
+	if (game_active == 0)
+	{
+		return;
+	}
 	update_piece();
 	game_counter_2 = 0;
 }
@@ -169,10 +176,13 @@ void update_piece()
     if (check_collision_y(piece.shape))
     {
         draw_piece(piece.shape, piece.x, piece.y, piece.color);
+        game_active = check_gameover();
         spawn_piece();
         return;
     }
     piece.y -= 2;
+    //if(!check_collision_xneg(piece.shape)) piece.x += 2;
+
     draw_piece(piece.shape, piece.x, piece.y, piece.color);
 }
 
@@ -193,23 +203,45 @@ int check_collision_y(uint8_t shape [4][4]) // will return a 1 if there is a col
         for (int j = 0; j < 4; j++)
         {
             int k = getPixels(piece.x+(2*j),piece.y-(2*i) - 2);
-            if (shape[i][j] == 1 && (k >= 0  && k < 7))
-            {
-                return 1;
-            }
+            if (shape[i][j] == 1 && (k < 7)) return 1;
         }
     }
     return 0;
 }
 
-int check_collision_xpos()
+int check_collision_xpos(uint8_t shape [4][4])
 {
-
+	for(int i=0; i<4; i++)
+	{
+		for (int j=0; j<4; j++)
+		{
+			int k = getPixels(piece.x+(2*j) + 2, piece.y-(2*i));
+			if (shape[i][j] == 1 && (k < 7)) return 1;
+		}
+	}
+	return 0;
 }
 
-int check_collision_xneg()
+int check_collision_xneg(uint8_t shape [4][4])
 {
+	for(int i=0; i<4; i++)
+	{
+		for (int j=0; j<4; j++)
+		{
+			int k = getPixels(piece.x+(2*j) - 2, piece.y-(2*i));
+			if (shape[i][j] == 1 && (k < 7)) return 1;
+		}
+	}
+	return 0;
+}
 
+int check_gameover()
+{
+	for(int i=9; i<16; i++)
+	{
+		if(getPixels(i, 54) < 7) return 0;
+	}
+	return 1;
 }
 
 int get_piece()

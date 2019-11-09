@@ -12,10 +12,10 @@
 
 void initialize_symbols ()
 {
-    draw(3,12,6);
-    draw_rect(2,11,4,11,6);
-    draw_rect(1,10,5,10,6);
-    draw_rect(3,8,3,9,6);
+    draw(3,12,2);
+    draw_rect(2,11,4,11,2);
+    draw_rect(1,10,5,10,2);
+    draw_rect(3,8,3,9,2);
 
     draw(3,6,4);
     draw_rect(1,5,5,5,4);
@@ -24,10 +24,10 @@ void initialize_symbols ()
     draw_rect(1,2,2,2,4);
     draw_rect(4,2,5,2,4);
 
-    draw_rect(7,12,10,12,6);
-    draw_rect(7,8,7,11,6);
-    draw_rect(8,8,10,8,6);
-    draw_rect(10,8,10,11,6);
+//    draw_rect(7,12,10,12,6);
+//    draw_rect(7,8,7,11,6);
+//    draw_rect(8,8,10,8,6);
+//    draw_rect(10,8,10,11,6);
 //    draw_number(Zero,7,12,2);
 //    draw_number(One,12,12,3);
 //    draw_number(Two,17,12,4);
@@ -35,13 +35,13 @@ void initialize_symbols ()
 //    draw_number(Five,27,12,1);
 }
 
-void initialize_numbers ()
-{
-    draw_rect(7,12,10,12,6);
-    draw_rect(7,8,7,11,6);
-    draw_rect(8,8,10,8,6);
-    draw_rect(8,8,8,10,6);
-}
+//void initialize_numbers ()
+//{
+//    draw_rect(7,12,10,12,6);
+//    draw_rect(7,8,7,11,6);
+//    draw_rect(8,8,10,8,6);
+//    draw_rect(8,8,8,10,6);
+//}
 
 
 void draw_number(const uint8_t shape[5][4], int x, int y, int color)
@@ -62,12 +62,13 @@ void draw_number(const uint8_t shape[5][4], int x, int y, int color)
 
 void draw_score(int score)
 {
-    x = 27;
-    count = 0;
+    int x = 27;
+    int count = 0;
     while(score != 0)
     {
-        value = score % 10;
-        switch(value):
+        int value = score % 10;
+        switch(value)
+        {
                     case 0:
                         draw_number(Zero,x,12,2);
                         x = x-5;
@@ -128,15 +129,16 @@ void draw_score(int score)
                         count += 1;
                         score /= 10;
                         break;
+        }
 
 
 
     }
 
-    for(x; x>=7; x = x-5)
+    while(x>=7)
     {
         draw_number(Zero,x,12,2);
-        x = x-5;
+        x -=5;
     }
 }
 
