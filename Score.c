@@ -28,6 +28,11 @@ void initialize_symbols ()
     draw_rect(7,8,7,11,6);
     draw_rect(8,8,10,8,6);
     draw_rect(10,8,10,11,6);
+    draw_number(Zero,7,12,2);
+    draw_number(One,12,12,3);
+    draw_number(Two,17,12,4);
+    draw_number(Four,22,12,5);
+    draw_number(Five,27,12,1);
 }
 
 void initialize_numbers ()
@@ -39,19 +44,16 @@ void initialize_numbers ()
 }
 
 
-void draw_number(const uint8_t shape[4][5], int x, int y, int color)
+void draw_number(const uint8_t shape[5][4], int x, int y, int color)
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
-        for (int j = 0; j < 5; j++)
+        for (int j = 0; j < 4; j++)
         {
 
             if(shape[i][j] == 1)
             {
-                draw(j + x, -2*i + y, color);
-                draw(j + x + 1, -2*i + y, color);
-                draw(j + x, -2*i + y - 1, color);
-                draw(j + x + 1, -2*i + y - 1, color);
+                draw(j + x, -i + y, color);
 
             }
         }
