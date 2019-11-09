@@ -49,11 +49,11 @@
  *      07      13
  *      08      8
  *      09      6
- *      10–12   5
- *      13–15   4
- *      16–18   3
- *      19–28   2int x = 0;
- *      29+       TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt  1
+ *      10-12   5
+ *      13-15   4
+ *      16-18   3
+ *      19-28   2
+ *      29+
  *
  *   - Will increase level by 1 for every 10 line clears
  *
@@ -134,7 +134,7 @@ void initialize_game () // stuff to do at startup
     piece_dictionary[25] = *L1;
     piece_dictionary[26] = *L2;
     piece_dictionary[27] = *L3;
-    rng = LFSR(175321);
+    rng = LFSR(7452);
     spawn_piece();
 }
 
@@ -216,12 +216,12 @@ int get_piece()
 {
     uint8_t p = rng % 28; //representing our tetromino
 
-    while(p == prev_piece)
+    while((p / 4) == prev_piece)
     {
         rng = LFSR(rng);
         p = rng % 28;
     }
-    prev_piece = p;
+    prev_piece = p / 4;
 
     return(p);
 }
