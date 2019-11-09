@@ -10,7 +10,7 @@
 
 struct Piece
 {
-    int x, y, color, isActive;
+    int x, y, color;
     uint8_t ** shape;
 };
 

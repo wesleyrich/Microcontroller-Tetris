@@ -101,6 +101,7 @@ const uint8_t gravity [] = {48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 4, 3, 2, 1}
 uint8_t * piece_dictionary [28];
 uint8_t level = 0;
 struct Piece piece;
+struct Piece next_piece [3];
 uint8_t prev_piece = 0;
 int rng = 0; //feedback variable for the LSFR
 int game_active = 0;
@@ -135,15 +136,26 @@ void initialize_game () // stuff to do at startup
     piece_dictionary[25] = *S1;
     piece_dictionary[26] = *S2;
     piece_dictionary[27] = *S3;
-    rng = LFSR(1978);
+    rng = LFSR(1956781);
+    for (int i = 0; i < 3; i++)
+    {
+    	int num = get_piece();
+        next_piece[i].color = (int)(num / 4);
+        next_piece[i].shape = (piece_dictionary[num]);
+    	next_piece[i].x = 23;
+    	next_piece[i].y = 43 - i * 10;
+    	draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y, next_piece[i].color);
+    }
     spawn_piece();
     game_active = 1;
 }
 
 int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
-int count_to_2 = 4;
+int count_to_2 = 1;
 int game_counter = 0;
 int game_counter_2 = 0;
+
+int bs = 0;
 
 
 void update_tetris () // game goes in here
@@ -181,19 +193,49 @@ void update_piece()
         return;
     }
     piece.y -= 2;
-    if(!check_collision_xneg(piece.shape)) piece.x -= 2;
+    if(bs == 0)
+    {
+    	if(!check_collision_xneg(piece.shape)) piece.x -= 2;
+    }
+    else if (bs == 1)
+    {
+    	if(!check_collision_xpos(piece.shape)) piece.x += 2;
+    }
+    else if (bs == 2)
+    {
+
+    }
+    else
+    {
+    	bs = 0;
+    }
 
     draw_piece(piece.shape, piece.x, piece.y, piece.color);
 }
 
 void spawn_piece()
 {
-    piece.x = 9;
+    bs++;
+	piece = next_piece[0];
+	piece.x = 9;
     piece.y = 54;
+    for (int i = 0; i < 3; i++)
+    {
+    	draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y, 7);
+    }
+	for (int i = 0; i < 2; i++)
+	{
+		next_piece[i].shape = next_piece[i+1].shape;
+		next_piece[i].color = next_piece[i+1].color;
+	}
     int num = get_piece();
-    piece.color = (int)(num / 4);
-    piece.shape = (piece_dictionary[num]);
+    next_piece[2].color = (int)(num / 4);
+    next_piece[2].shape = (piece_dictionary[num]);
     draw_piece(piece.shape, piece.x, piece.y, piece.color);
+    for (int i = 0; i < 3; i++)
+    {
+    	draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y, next_piece[i].color);
+    }
 }
 
 int check_collision_y(uint8_t shape [4][4]) // will return a 1 if there is a collision with any other pixels

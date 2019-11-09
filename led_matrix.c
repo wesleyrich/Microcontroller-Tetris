@@ -73,13 +73,13 @@ void initialize_pixels()
 	draw_rect(26,58,28,58,3);
 
 	// LVL
-	draw_rect(23,52,23,55,1);
-	draw(24,52,1);
-	draw_rect(25,53,25,55,1);
-	draw(26,52,1);
-	draw_rect(27,53,27,55,1);
-	draw_rect(29,52,29,55,1);
-	draw(30,52,1);
+	draw_rect(23,52,23,55,5);
+	draw(24,52,5);
+	draw_rect(26,53,26,55,5);
+	draw(27,52,5);
+	draw_rect(28,53,28,55,5);
+	draw_rect(30,52,30,55,5);
+	draw(31,52,5);
 
 
 //	draw_rect(29)
