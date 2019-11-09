@@ -146,7 +146,7 @@ void draw_level(int level)
 {
     int x = 27;
     int count = 0;
-    while(level) != 0)
+    while(level != 0)
     {
         int value = level % 10;
         switch(value)
@@ -237,7 +237,7 @@ void draw_level(int level)
 
     while(x >= 23)
     {
-        draw_number(Zero,x,50,2);
+        draw_number(Zero_t,x,50,2);
         x -=4;
     }
 

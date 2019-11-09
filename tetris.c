@@ -136,7 +136,7 @@ void initialize_game () // stuff to do at startup
     piece_dictionary[25] = *S1;
     piece_dictionary[26] = *S2;
     piece_dictionary[27] = *S3;
-    rng = LFSR(1956781);
+    rng = LFSR(17612);
     for (int i = 0; i < 3; i++)
     {
     	int num = get_piece();

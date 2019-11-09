@@ -31,6 +31,7 @@ int main(void)
 	initialize_pixels();
 	initialize_symbols();
 	draw_score(54762);
+	draw_level(9);
 	initialize_game();
 	tim2_setup();
 	for(;;);
