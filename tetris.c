@@ -105,6 +105,7 @@ struct Piece next_piece [3];
 uint8_t prev_piece = 0;
 int rng = 0; //feedback variable for the LSFR
 int game_active = 0;
+int ending = 0;
 
 void initialize_game () // stuff to do at startup
 {
@@ -136,7 +137,7 @@ void initialize_game () // stuff to do at startup
     piece_dictionary[25] = *S1;
     piece_dictionary[26] = *S2;
     piece_dictionary[27] = *S3;
-    rng = LFSR(17612);
+    rng = LFSR(1674);
     for (int i = 0; i < 3; i++)
     {
     	int num = get_piece();
@@ -154,9 +155,6 @@ int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
 int count_to_2 = 1;
 int game_counter = 0;
 int game_counter_2 = 0;
-
-int bs = 0;
-
 
 void update_tetris () // game goes in here
 {
@@ -176,6 +174,7 @@ void update_tetris () // game goes in here
 	// do a frame
 	if (game_active == 0)
 	{
+		rick();
 		return;
 	}
 	update_piece();
@@ -193,29 +192,13 @@ void update_piece()
         return;
     }
     piece.y -= 2;
-    if(bs == 0)
-    {
-    	if(!check_collision_xneg(piece.shape)) piece.x -= 2;
-    }
-    else if (bs == 1)
-    {
-    	if(!check_collision_xpos(piece.shape)) piece.x += 2;
-    }
-    else if (bs == 2)
-    {
-
-    }
-    else
-    {
-    	bs = 0;
-    }
+    if(!check_collision_xneg(piece.shape)) piece.x -= 2;
 
     draw_piece(piece.shape, piece.x, piece.y, piece.color);
 }
 
 void spawn_piece()
 {
-    bs++;
 	piece = next_piece[0];
 	piece.x = 9;
     piece.y = 54;
@@ -279,6 +262,7 @@ int check_collision_xneg(uint8_t shape [4][4])
 
 int check_gameover()
 {
+	ending = rng % 2;
 	for(int i=9; i<16; i++)
 	{
 		if(getPixels(i, 54) < 7) return 0;
@@ -303,4 +287,22 @@ int get_piece()
 int LFSR(int init)
 {
     return ((((init >> 9) & 1) ^ ((init >> 1) & 1)) << 15) | (init >> 1);
+}
+
+void rick()
+{
+	for(int row=15; row<55; row++)
+	{
+		for(int col=1; col<21; col++)
+		{
+			draw(col, row, getPixels(col, row+1));
+		}
+	}
+	if(ending)
+	{
+	for (int col = 1; col < 21; col++)
+		{
+			draw(col, 54, 7);
+		}
+	}
 }

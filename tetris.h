@@ -14,6 +14,7 @@ void update_tetris();
 void initialize_game();
 void update_piece();
 void spawn_piece();
+void rick();
 int check_gameover();
 int check_collision_y(uint8_t shape [4][4]);
 int check_collision_xpos(uint8_t shape [4][4]);
