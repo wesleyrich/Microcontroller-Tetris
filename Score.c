@@ -142,3 +142,106 @@ void draw_score(int score)
     }
 }
 
+void draw_level(int level)
+{
+    int x = 27;
+    int count = 0;
+    while(level) != 0)
+    {
+        int value = level % 10;
+        switch(value)
+        {
+                    case 0:
+                        draw_number(Zero,x,50,2);
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 1:
+                        if(x != 27)
+                        {
+                            draw_number(One_t,x,50,2);
+                        }
+                        else{
+                        draw_number(One,x,50,2);}
+
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 2:
+                        if(x != 27)
+                        {
+                            draw_number(Two_t,x,50,2);
+                        }
+                        else{
+                        draw_number(Two,x,50,2);}
+
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 3:
+                        if(x != 27)
+                        {
+                            draw_number(Three_t,x,50,2);
+                        }
+                        else{
+                        draw_number(Three,x,50,2);}
+
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 4:
+                        draw_number(Four,x,50,2);
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 5:
+                        draw_number(Five,x,50,2);
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 6:
+                        draw_number(Six,x,50,2);
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 7:
+                        draw_number(Seven,x,50,2);
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 8:
+                        draw_number(Eight,x,50,2);
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+                    case 9:
+                        draw_number(Nine,x,50,2);
+                        x = x-4;
+                        count += 1;
+                        level /= 10;
+                        break;
+        }
+
+
+
+    }
+
+    while(x >= 23)
+    {
+        draw_number(Zero,x,50,2);
+        x -=4;
+    }
+
+
+
+}
+
