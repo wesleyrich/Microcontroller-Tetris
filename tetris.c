@@ -135,7 +135,7 @@ void initialize_game () // stuff to do at startup
     piece_dictionary[25] = *S1;
     piece_dictionary[26] = *S2;
     piece_dictionary[27] = *S3;
-    rng = LFSR(7452);
+    rng = LFSR(1978);
     spawn_piece();
     game_active = 1;
 }
@@ -181,7 +181,7 @@ void update_piece()
         return;
     }
     piece.y -= 2;
-    //if(!check_collision_xneg(piece.shape)) piece.x += 2;
+    if(!check_collision_xneg(piece.shape)) piece.x -= 2;
 
     draw_piece(piece.shape, piece.x, piece.y, piece.color);
 }
@@ -228,7 +228,7 @@ int check_collision_xneg(uint8_t shape [4][4])
 	{
 		for (int j=0; j<4; j++)
 		{
-			int k = getPixels(piece.x+(2*j) - 2, piece.y-(2*i));
+			int k = getPixels(piece.x+(2*j) - 1, piece.y-(2*i));
 			if (shape[i][j] == 1 && (k < 7)) return 1;
 		}
 	}

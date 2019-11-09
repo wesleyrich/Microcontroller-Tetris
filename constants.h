@@ -75,9 +75,9 @@ static const uint8_t Z1[4][4] = {{0,1,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //
 static const uint8_t Z2[4][4] = {{1,1,0,0}, {0,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations z
 static const uint8_t Z3[4][4] = {{0,1,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //3 rotations z
 
-//z
+//s
 static const uint8_t S0[4][4] = {{0,1,1,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations s
-static const uint8_t S1[4][4] = {{1,0,0,0}, {1,1,0,0}, {0,0,1,0}, {0,0,0,0}}; //1 rotations s
+static const uint8_t S1[4][4] = {{1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}}; //1 rotations s
 static const uint8_t S2[4][4] = {{0,1,1,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations s
 static const uint8_t S3[4][4] = {{1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}}; //3 rotations s
 

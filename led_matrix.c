@@ -42,8 +42,8 @@ void initialize_pixels()
 	}
 
 	// draw the border
-	draw_rect(0,14,22,55,6);
-	draw_rect(1,15,21,54,7);
+	draw_rect(0,14,21,55,6);
+	draw_rect(1,15,20,54,7);
 	// draw tetris
 	// T
 	draw_rect(2,62,6,62,0);
@@ -71,6 +71,23 @@ void initialize_pixels()
 	draw_rect(27,60,29,60,3);
 	draw_rect(29,58,29,59,3);
 	draw_rect(26,58,28,58,3);
+
+	// LVL
+	draw_rect(23,52,23,55,6);
+	draw(24,52,6);
+	draw_rect(25,53,25,55,6);
+	draw(26,52,6);
+	draw_rect(27,53,27,55,6);
+	draw_rect(29,52,29,55,6);
+	draw(30,52,6);
+
+
+//	draw_rect(29)
+//	draw_rect
+//	draw_rect(24,49,24,50,6);
+//	draw_rect(25,53,25,54,6);
+//	draw_rect(26,51,26,52,6);
+//	draw_rect(27,53,27,54,6);
 }
 
 void LED_pins_setup ()
