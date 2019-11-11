@@ -4,6 +4,7 @@
 #include "led_matrix.h"
 #include "tetris.h"
 #include "pieces.h"
+#include "controller.h"
 
 //points for 1 line = 40 * (n + 1) where n is the level number
 //points for 2 line = 100 * (n + 1) where n is the level number

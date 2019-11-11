@@ -11,6 +11,17 @@
 // TIMING STUFF
 #define TIM2_FREQ 500000 // 12 MHz
 
+// Controller buttons
+// A B sel start up down left right
+#define but_A 7
+#define but_B 6
+#define but_SEL 5
+#define but_START 4
+#define but_UP 3
+#define but_DOWN 2
+#define but_LEFT 1
+#define but_RIGHT 0
+
 // PIN NUMBERS IN GPIOC
 #define LED_OE 0
 #define LED_CLK 1
@@ -25,6 +36,11 @@
 #define LED_B 10
 #define LED_G2 11
 #define LED_G1 12
+
+// PIN NUMBERS IN GPIOA
+#define CTRL_CLK 0
+#define CTRL_LAT 1
+#define CTRL_DAT 2
 
 // COLORS
 #define C_OFF -1

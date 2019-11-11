@@ -18,6 +18,7 @@
 #include "tetris.h"
 #include "pieces.h"
 #include "Score.h"
+#include "controller.h"
 
 //#include "pieces.h"
 			
@@ -32,6 +33,7 @@ int main(void)
 	initialize_symbols();
 	draw_score(54762);
 	draw_level(9);
+	initialize_controller();
 	initialize_game();
 	tim2_setup();
 	for(;;);
@@ -56,6 +58,8 @@ void TIM2_IRQHandler ()
     TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt
 
 	update_led(); // update the led matrix
+
+	update_controller(); // this function is going to update the controller, hence the name (*cause Grant is being weird about things like this*)
 
     update_tetris(); // update the game
 

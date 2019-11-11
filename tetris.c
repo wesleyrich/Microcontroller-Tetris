@@ -11,6 +11,7 @@
 #include "led_matrix.h"
 #include "tetris.h"
 #include "pieces.h"
+#include "controller.h"
 
 
 /*
@@ -68,7 +69,7 @@
  *   represented by a 0 or 1 at that spot in memory.
  *
  * RNG:
- *   I'm going to implement a Fibonacci linear feedback shift register to
+ *   I'm going to imple if(get_buttons(but_LEFT) && !check_collision_xneg(piece.shape)) piece.x -= 2;ment a Fibonacci linear feedback shift register to
  *   imitate randomness of pieces just like the NES did. This will need to be
  *   called constantly to perpetuate the PRNG, including on the title screen
  *   before the game begins. The order that the pieces appear in are randomized,
@@ -137,10 +138,11 @@ void initialize_game () // stuff to do at startup
     piece_dictionary[25] = *S1;
     piece_dictionary[26] = *S2;
     piece_dictionary[27] = *S3;
-    rng = LFSR(1674);
+    rng = LFSR(105026);
     for (int i = 0; i < 3; i++)
     {
     	int num = get_piece();
+    	next_piece[i].type = num;
         next_piece[i].color = (int)(num / 4);
         next_piece[i].shape = (piece_dictionary[num]);
     	next_piece[i].x = 23;
@@ -152,7 +154,7 @@ void initialize_game () // stuff to do at startup
 }
 
 int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
-int count_to_2 = 1;
+int count_to_2 = 4;
 int game_counter = 0;
 int game_counter_2 = 0;
 
@@ -175,10 +177,65 @@ void update_tetris () // game goes in here
 	if (game_active == 0)
 	{
 		rick();
+		if (get_buttons(but_START))
+		{
+			initialize_game();
+		}
 		return;
 	}
 	update_piece();
 	game_counter_2 = 0;
+}
+void handle_input ()
+{
+    if(get_buttons(but_LEFT) && !check_collision_xneg(piece.shape))
+    {
+    	piece.x -= 2;
+    }
+    else if(get_buttons(but_RIGHT) && !check_collision_xpos(piece.shape))
+    {
+    	piece.x += 2;
+    }
+    if (get_buttons(but_B))
+    {
+    	rotate_piece(0);
+    }
+    else if (get_buttons(but_A))
+    {
+    	rotate_piece(1);
+    }
+    clear_buttons();
+}
+
+void rotate_piece(uint8_t dir)
+{
+	uint8_t type = piece.type;
+	if (dir == 0) // rotate left
+	{
+		if (type % 4 == 0)
+		{
+			piece.type += 3;
+			piece.shape = (piece_dictionary[piece.type]);
+		}
+		else
+		{
+			piece.type -= 1;
+			piece.shape = (piece_dictionary[piece.type]);
+		}
+	}
+	if (dir == 1) // rotate right
+	{
+		if (type % 4 == 3)
+		{
+			piece.type -= 3;
+			piece.shape = (piece_dictionary[piece.type]);
+		}
+		else
+		{
+			piece.type += 1;
+			piece.shape = (piece_dictionary[piece.type]);
+		}
+	}
 }
 
 void update_piece()
@@ -192,7 +249,7 @@ void update_piece()
         return;
     }
     piece.y -= 2;
-    if(!check_collision_xneg(piece.shape)) piece.x -= 2;
+    handle_input();
 
     draw_piece(piece.shape, piece.x, piece.y, piece.color);
 }
@@ -200,7 +257,7 @@ void update_piece()
 void spawn_piece()
 {
 	piece = next_piece[0];
-	piece.x = 9;
+	piece.x = 9; // should be 9 we changed this to make it testable
     piece.y = 54;
     for (int i = 0; i < 3; i++)
     {
@@ -210,8 +267,10 @@ void spawn_piece()
 	{
 		next_piece[i].shape = next_piece[i+1].shape;
 		next_piece[i].color = next_piece[i+1].color;
+		next_piece[i].type = next_piece[i+1].type;
 	}
     int num = get_piece();
+    next_piece[2].type = num;
     next_piece[2].color = (int)(num / 4);
     next_piece[2].shape = (piece_dictionary[num]);
     draw_piece(piece.shape, piece.x, piece.y, piece.color);

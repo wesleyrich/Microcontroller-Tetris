@@ -11,6 +11,7 @@
 #include "led_matrix.h"
 #include "tetris.h"
 #include "pieces.h"
+#include "controller.h"
 
 uint8_t pixels [32][64]; // x are the columns, y are the rows
 
