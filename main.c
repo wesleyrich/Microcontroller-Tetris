@@ -29,10 +29,6 @@ void tim2_setup();
 int main(void)
 {
 	LED_pins_setup();
-	initialize_pixels();
-	initialize_symbols();
-	draw_score(54762);
-	draw_level(9);
 	initialize_controller();
 	initialize_game();
 	tim2_setup();

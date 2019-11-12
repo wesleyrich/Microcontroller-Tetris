@@ -9,5 +9,9 @@
 #define MINIPROJECT_SCORE_H_
 
 void initialize_symbols ();
+void draw_score(int score);
+void draw_level(int level);
+void addScore (int amount);
+int getScore ();
 
 #endif /* MINIPROJECT_SCORE_H_ */

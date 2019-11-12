@@ -11,6 +11,18 @@
 //points for 3 line = 300 * (n + 1) where n is the level number
 //points for 4 line = 1200 * (n + 1) where n is the level number
 
+int SCORE = 0;
+
+void addScore (int amount)
+{
+	SCORE += amount;
+}
+
+int getScore ()
+{
+	return SCORE;
+}
+
 void initialize_symbols ()
 {
     draw(3,12,2);
@@ -61,10 +73,12 @@ void draw_number(const uint8_t shape[5][4], int x, int y, int color)
     }
 }
 
-void draw_score(int score)
+void draw_score()
 {
+	draw_rect(8, 7, 32, 12, 7);
     int x = 27;
     int count = 0;
+    int score = SCORE;
     while(score != 0)
     {
         int value = score % 10;

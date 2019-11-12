@@ -110,6 +110,11 @@ int ending = 0;
 
 void initialize_game () // stuff to do at startup
 {
+	initialize_pixels();
+	initialize_symbols();
+	addScore(-getScore());
+	draw_score();
+	draw_level(1);
     piece_dictionary[0] = *I0;
     piece_dictionary[1] = *I1;
     piece_dictionary[2] = *I2;
@@ -149,6 +154,7 @@ void initialize_game () // stuff to do at startup
     	next_piece[i].y = 43 - i * 10;
     	draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y, next_piece[i].color);
     }
+
     spawn_piece();
     game_active = 1;
 }
@@ -177,10 +183,6 @@ void update_tetris () // game goes in here
 	if (game_active == 0)
 	{
 		rick();
-		if (get_buttons(but_START))
-		{
-			initialize_game();
-		}
 		return;
 	}
 	update_piece();
@@ -188,6 +190,7 @@ void update_tetris () // game goes in here
 }
 void handle_input ()
 {
+    draw_piece(piece.shape, piece.x, piece.y, -1);
     if(get_buttons(but_LEFT) && !check_collision_xneg(piece.shape))
     {
     	piece.x -= 2;
@@ -204,7 +207,21 @@ void handle_input ()
     {
     	rotate_piece(1);
     }
+    if (get_buttons(but_START))
+    {
+    	initialize_game();
+    }
+    if (get_buttons(but_DOWN))
+    {
+       	count_to_2 = 1;
+    }
+    else
+    {
+     	count_to_2 = gravity[level];
+    }
+
     clear_buttons();
+    draw_piece(piece.shape, piece.x, piece.y, piece.color);
 }
 
 void rotate_piece(uint8_t dir)
@@ -244,12 +261,12 @@ void update_piece()
     if (check_collision_y(piece.shape))
     {
         draw_piece(piece.shape, piece.x, piece.y, piece.color);
+    	check_line_clear();
         game_active = check_gameover();
         spawn_piece();
         return;
     }
     piece.y -= 2;
-    handle_input();
 
     draw_piece(piece.shape, piece.x, piece.y, piece.color);
 }
@@ -317,6 +334,61 @@ int check_collision_xneg(uint8_t shape [4][4])
 		}
 	}
 	return 0;
+}
+
+check_line_clear()
+{
+	uint8_t rows [20];
+	for (int y = 0; y < 40; y+=2)
+	{
+		rows[y / 2] = 1;
+		for (int x = 0; x < 20; x+=2)
+		{
+			if (getPixels(x + 1,y + 15) > 6)
+			{
+				rows[y / 2] = 0;
+				break;
+			}
+		}
+	}
+	clear_rows(rows);
+}
+
+void clear_rows(uint8_t rows[20])
+{
+	int lines_cleared = 0;
+	for (int y = 0; y < 40; y += 2)
+	{
+		if (rows[y / 2] == 1)
+		{
+			lines_cleared++;
+			for (int i = 0; i < 20; i++)
+			{
+				for (int j = 0; j < (40 - y - 2); j++)
+				{
+					draw(i + 1,j + y + 15, getPixels(i + 1,j + y + 17));
+				}
+			}
+		}
+	}
+	switch (lines_cleared)
+	{
+		case 1:
+			addScore(40);
+			break;
+		case 2:
+			addScore(100);
+			break;
+		case 3:
+			addScore(300);
+			break;
+		case 4:
+			addScore(1200);
+			break;
+		default:
+			break;
+	}
+	draw_score();
 }
 
 int check_gameover()
