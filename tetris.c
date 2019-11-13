@@ -98,13 +98,14 @@ uint8_t * shapes[28];
 
 
 
-const uint8_t gravity [] = {48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 4, 3, 2, 1};
+const uint8_t gravity [] = {48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2,2,2,2,2,2,2,2,2,2, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 uint8_t * piece_dictionary [28];
 uint8_t level = 0;
+uint8_t lines_cleared = 0;
 struct Piece piece;
 struct Piece next_piece [3];
 uint8_t prev_piece = 0;
-int rng = 0; //feedback variable for the LSFR
+int rng = 12323; //feedback variable for the LSFR
 int game_active = 0;
 int ending = 0;
 
@@ -114,7 +115,9 @@ void initialize_game () // stuff to do at startup
 	initialize_symbols();
 	addScore(-getScore());
 	draw_score();
-	draw_level(1);
+	level = 0;
+	lines_cleared = 0;
+	draw_level(level);
     piece_dictionary[0] = *I0;
     piece_dictionary[1] = *I1;
     piece_dictionary[2] = *I2;
@@ -143,7 +146,7 @@ void initialize_game () // stuff to do at startup
     piece_dictionary[25] = *S1;
     piece_dictionary[26] = *S2;
     piece_dictionary[27] = *S3;
-    rng = LFSR(105026);
+    rng = LFSR(rng);
     for (int i = 0; i < 3; i++)
     {
     	int num = get_piece();
@@ -211,7 +214,7 @@ void handle_input ()
     {
     	initialize_game();
     }
-    if (get_buttons(but_DOWN))
+    if (get_buttons_held(but_DOWN))
     {
        	count_to_2 = 1;
     }
@@ -263,6 +266,7 @@ void update_piece()
         draw_piece(piece.shape, piece.x, piece.y, piece.color);
     	check_line_clear();
         game_active = check_gameover();
+        count_to_2 = gravity[level];
         spawn_piece();
         return;
     }
@@ -295,6 +299,16 @@ void spawn_piece()
     {
     	draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y, next_piece[i].color);
     }
+}
+
+void update_level ()
+{
+    level = lines_cleared / 1;
+    if (level > 30)
+    {
+        level = 30;
+    }
+    draw_level(level);
 }
 
 int check_collision_y(uint8_t shape [4][4]) // will return a 1 if there is a collision with any other pixels
@@ -356,12 +370,14 @@ check_line_clear()
 
 void clear_rows(uint8_t rows[20])
 {
-	int lines_cleared = 0;
+	int lines = 0;
+	int offset = 0;
 	for (int y = 0; y < 40; y += 2)
 	{
-		if (rows[y / 2] == 1)
+		if (rows[(y + offset) / 2] == 1)
 		{
-			lines_cleared++;
+		    offset += 2;
+			lines++;
 			for (int i = 0; i < 20; i++)
 			{
 				for (int j = 0; j < (40 - y - 2); j++)
@@ -369,9 +385,11 @@ void clear_rows(uint8_t rows[20])
 					draw(i + 1,j + y + 15, getPixels(i + 1,j + y + 17));
 				}
 			}
+			y -= 2;
 		}
 	}
-	switch (lines_cleared)
+	lines_cleared += lines;
+	switch (lines)
 	{
 		case 1:
 			addScore(40);
@@ -389,6 +407,7 @@ void clear_rows(uint8_t rows[20])
 			break;
 	}
 	draw_score();
+	update_level();
 }
 
 int check_gameover()

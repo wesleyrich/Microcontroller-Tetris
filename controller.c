@@ -54,6 +54,7 @@ int controller_counter = 0;
 volatile uint8_t hold_data = 0;
 volatile uint8_t last_data = 0;
 volatile uint8_t c_data = 0;
+volatile uint8_t buttons_held = 0;
 
 void update_controller()
 {
@@ -95,6 +96,7 @@ void update_controller()
 		toggle_bit_a(CTRL_CLK);
 		toggle_bit_a(CTRL_CLK);
 		hold_data |= ~c_data; // or equal to the data aquired over the last cycle
+		buttons_held = hold_data;
 		hold_data &= ~last_data; // remove any bits that were triggered previously
 		last_data &= ~c_data;
 		c_data = 0;
@@ -111,8 +113,14 @@ uint8_t get_buttons(uint8_t button)
 	return (hold_data & 1 << button) >> button;
 }
 
+uint8_t get_buttons_held(uint8_t button)
+{
+    return (buttons_held & 1 << button) >> button;
+}
+
 void clear_buttons()
 {
 	last_data |= hold_data;
+	buttons_held = 0;
 	hold_data = 0;
 }

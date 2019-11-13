@@ -13,6 +13,7 @@ void set_bit_a(uint8_t code, uint8_t state);
 uint8_t toggle_bit_a(uint8_t code);
 void update_controller();
 uint8_t get_buttons(uint8_t button);
+uint8_t get_buttons_held(uint8_t button);
 void clear_buttons();
 
 #endif /* MINIPROJECT_CONTROLLER_H_ */

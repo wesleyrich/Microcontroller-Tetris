@@ -159,6 +159,7 @@ void draw_score()
 
 void draw_level(int level)
 {
+    draw_rect(23, 45, 31, 50, 7);
     int x = 27;
     int count = 0;
     while(level != 0)
