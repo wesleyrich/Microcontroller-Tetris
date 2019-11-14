@@ -9,7 +9,7 @@
 #define CONSTANTS_H_
 
 // TIMING STUFF
-#define TIM2_FREQ 500000 // 12 MHz
+#define TIM2_FREQ 10000 // 12 MHz
 
 // Controller buttons
 // A B sel start up down left right
@@ -66,7 +66,6 @@ static const uint8_t T0[4][4] = {{1,1,1,0}, {0,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //
 static const uint8_t T1[4][4] = {{0,1,0,0}, {1,1,0,0}, {0,1,0,0}, {0,0,0,0}}; //1 rotation T
 static const uint8_t T2[4][4] = {{0,1,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}}; //2 rotations T
 static const uint8_t T3[4][4] = {{1,0,0,0}, {1,1,0,0}, {1,0,0,0}, {0,0,0,0}}; //3 rotations T
-
 //0
 static const uint8_t O0[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //0 rotations O
 static const uint8_t O1[4][4] = {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}}; //1 rotations O

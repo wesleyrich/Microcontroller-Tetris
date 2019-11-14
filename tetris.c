@@ -90,7 +90,7 @@ void initialize_game();
  *
  */
 
-#define LAG_FACTOR 0.27   // reduce frames to count to by this factor (ie LAG_FACTOR = 0.1 reduces frames to count by 10%)
+#define LAG_FACTOR 0   // reduce frames to count to by this factor (ie LAG_FACTOR = 0.1 reduces frames to count by 10%)
 
 // Holds all the shapes
 uint8_t * shapes[28];
@@ -163,7 +163,7 @@ void initialize_game () // stuff to do at startup
 }
 
 int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
-int count_to_2 = 4;
+int count_to_2 = 48;
 int game_counter = 0;
 int game_counter_2 = 0;
 
@@ -193,6 +193,14 @@ void update_tetris () // game goes in here
 }
 void handle_input ()
 {
+    if (getState() != 1)
+    {
+        return;
+    }
+    if (get_buttons(but_SEL))
+    {
+        setState(0);
+    }
     draw_piece(piece.shape, piece.x, piece.y, -1);
     if(get_buttons(but_LEFT) && !check_collision_xneg(piece.shape))
     {
@@ -223,7 +231,6 @@ void handle_input ()
      	count_to_2 = gravity[level];
     }
 
-    clear_buttons();
     draw_piece(piece.shape, piece.x, piece.y, piece.color);
 }
 
@@ -303,7 +310,7 @@ void spawn_piece()
 
 void update_level ()
 {
-    level = lines_cleared / 1;
+    level = lines_cleared / 5;
     if (level > 30)
     {
         level = 30;
@@ -350,7 +357,7 @@ int check_collision_xneg(uint8_t shape [4][4])
 	return 0;
 }
 
-check_line_clear()
+void check_line_clear()
 {
 	uint8_t rows [20];
 	for (int y = 0; y < 40; y+=2)

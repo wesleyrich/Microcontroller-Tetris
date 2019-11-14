@@ -12,6 +12,7 @@
 #include "tetris.h"
 #include "pieces.h"
 #include "controller.h"
+#include "menu.h"
 
 
 void initialize_controller()
@@ -48,8 +49,6 @@ uint8_t toggle_bit_a(uint8_t code) // toggles a bit and returns the new state
 	return ((GPIOA->ODR & 1 << code) >> code); // return the new state
 }
 
-int update_every = 100;
-int counter = 0;
 int controller_counter = 0;
 volatile uint8_t hold_data = 0;
 volatile uint8_t last_data = 0;
@@ -58,12 +57,7 @@ volatile uint8_t buttons_held = 0;
 
 void update_controller()
 {
-	if (counter < update_every)
-	{
-		counter++;
-		return;
-	}
-	counter = 0;
+
 	if (controller_counter == 0)
 	{
 		set_bit_a(CTRL_LAT, 1);
@@ -104,6 +98,8 @@ void update_controller()
 		if (hold_data != 0)
 		{
 			handle_input();
+			handle_input_menu();
+			clear_buttons();
 		}
 	}
 }

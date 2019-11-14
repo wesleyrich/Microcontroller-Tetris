@@ -19,20 +19,23 @@
 #include "pieces.h"
 #include "Score.h"
 #include "controller.h"
+#include "menu.h"
+#include "state_manager.h"
 
 //#include "pieces.h"
 			
 void tim2_setup();
 
-
-
 int main(void)
 {
 	LED_pins_setup();
 	initialize_controller();
-	initialize_game();
+	initialize_menu();
 	tim2_setup();
-	for(;;);
+	for(;;)
+	{
+	    update_led();
+	}
 }
 
 void tim2_setup ()
@@ -53,12 +56,17 @@ void TIM2_IRQHandler ()
 
     TIM2->SR &= ~TIM_SR_UIF; // acknowledge the interrupt
 
-	update_led(); // update the led matrix
-
 	update_controller(); // this function is going to update the controller, hence the name (*cause Grant is being weird about things like this*)
 
-    update_tetris(); // update the game
-
+	switch (getState())
+	{
+	case 0:
+	    //update_menu();
+	    break;
+	case 1:
+	    update_tetris();
+	    break;
+	}
 }
 
 

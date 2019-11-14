@@ -13,7 +13,7 @@
 #include "pieces.h"
 #include "controller.h"
 
-uint8_t pixels [32][64]; // x are the columns, y are the rows
+volatile uint8_t pixels [32][64]; // x are the columns, y are the rows
 
 void nano_wait(unsigned int n) {
     asm(    "        mov r0,%0\n"
@@ -103,10 +103,10 @@ void LED_pins_setup ()
 }
 
 int led_counter = 0;
+int x = 0; int y = 0;
 
-void update_led() // reading one bit too many
+void update_led()
 {
-
 	if (!toggle_bit_c(LED_CLK)) // if its on a high clock cycle update the leds
 	{
 		return;
@@ -115,19 +115,13 @@ void update_led() // reading one bit too many
 	if (led_counter >= (1024)) // check if cycle is complete
 	{
 		led_counter = 0;
+		x = 0;
+		y = 0;
 		return;
 	}
 
-	int x, y;
-
-	x = led_counter / 64; // the column
-	y = led_counter % 64; // the row
-
-	uint8_t color_top = pixels[x][y];
-	uint8_t color_bot = pixels[x+16][y];
-
-	set_color(1, color_top);
-	set_color(2, color_bot);
+	set_color(1,pixels[x][y]);
+	set_color(2,pixels[x+16][y]);
 
 	if (y == 63) // we've finished this row, latch and enable.
 	{
@@ -144,8 +138,18 @@ void update_led() // reading one bit too many
 		set_bit_c(LED_LAT, 0);
 	}
 
-	led_counter++;
+	y++;
+	if (y > 63)
+	{
+	    y = 0;
+	    x++;
+	    if (x > 31)
+	    {
+	       x = 0;
+	    }
+	}
 
+	led_counter++;
 }
 
 int toggle_bit_c(int code) // toggles a bit and returns the new state
