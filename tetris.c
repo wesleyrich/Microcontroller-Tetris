@@ -90,7 +90,7 @@ void initialize_game();
  *
  */
 
-#define LAG_FACTOR 0   // reduce frames to count to by this factor (ie LAG_FACTOR = 0.1 reduces frames to count by 10%)
+#define LAG_FACTOR -1   // reduce frames to count to by this factor (ie LAG_FACTOR = 0.1 reduces frames to count by 10%)
 
 // Holds all the shapes
 uint8_t * shapes[28];

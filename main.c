@@ -21,6 +21,7 @@
 #include "controller.h"
 #include "menu.h"
 #include "state_manager.h"
+#include "eeprom.h"
 
 //#include "pieces.h"
 			
@@ -29,9 +30,9 @@ void tim2_setup();
 int main(void)
 {
 	//EEPROM TESTING
-	init_I2C1();
-	write_EEPROM(0x00, 69);
-	int checking = read_EEPROM(0x00);
+//	init_I2C1();
+//	write_EEPROM(0x10, 0x69);
+//	int checking = read_EEPROM(0x10);
 
 
 	LED_pins_setup();
