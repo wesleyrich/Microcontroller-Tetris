@@ -28,6 +28,12 @@ void tim2_setup();
 
 int main(void)
 {
+	//EEPROM TESTING
+	init_I2C1();
+	write_EEPROM(0x00, 69);
+	int checking = read_EEPROM(0x00);
+
+
 	LED_pins_setup();
 	initialize_controller();
 	initialize_menu();
