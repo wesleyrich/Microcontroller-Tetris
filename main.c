@@ -24,16 +24,28 @@
 #include "eeprom.h"
 
 //#include "pieces.h"
-			
+
+
 void tim2_setup();
 
 int main(void)
 {
 	//EEPROM TESTING
-//	init_I2C1();
+	//initialize_eeprom();
 //	write_EEPROM(0x10, 0x69);
 //	int checking = read_EEPROM(0x10);
+   // for (int i = 0; i < 50; i+=2) // name -> score
+   // {
+       // write_EEPROM(i * 0x4, 100 * i);
+        //write_EEPROM((i+1) * 0x4, 50 * i);
+  //  }
 
+  //  int name = read_EEPROM(40);
+    //int nscore = read_EEPROM(44);
+
+
+    initialize_eeprom();
+    read_and_sort();
 
 	LED_pins_setup();
 	initialize_controller();
