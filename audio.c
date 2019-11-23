@@ -43,7 +43,9 @@ float stan_15[5] = {D5,A4s,D5,C5,C5};
 //https://pages.mtu.edu/~suits/notefreqs.html
 
 float * stanzas[31] = {stan_1,stan_2,stan_3,stan_4,stan_1,stan_2,stan_3,stan_8,stan_9,stan_10,stan_11,stan_12,stan_9,stan_10,stan_11,stan_12,stan_13,stan_14,stan_13,stan_15,stan_13,stan_14,stan_13,stan_15,stan_9,stan_10,stan_11,stan_12,stan_9,stan_10,stan_11,stan_12};
-
+float  music[133] = {B5,C6s,D6,E6,F6s,D6,F6s,F6,C6s,F6,E6,C6,E6,B5,C6s,D6,E6,F6s,D6,F6s,B6,A6,F6s,D6,F6s,A6,A6,B5,C6s,D6,E6,F6s,D6,F6s,F6,C6s,F6,E6,C6,E6,B5,C6s,D6,E6,F6s,D6,F6s,B6,
+        A6,F6s,D6,C6s,B6,B6,B3,C4s,D4,E4,F4s,F4,D4s,F4,C4s,F4,E4,C4,E4,B3,C4s,D4,E4,F4s,D4,F4s,B4,A4,F4s,D4,F4s,A4,A4,B3,C4s,D4,E4,F4s,F4,D4s,F4,C4s,F4,E4,C4,E4,
+        B3,C4s,D4,E4,F4s,D4,F4s,B4,A4,F4s,D4,F4s,A4,A4,F4s,G4s,A4s,B4,C5s,A4,C5s,D5,A4s,D5,C5,A4s,C5,F4s,G4s,A4s,B4,C5s,A4,C5s,D5,A4s,D5,C5,C5};
 int offset = 0;
 int step = B5 * N / RATE * (1 << 16);
 
@@ -113,22 +115,31 @@ void test_audio(){
       setup_timer6();
 }
 int iter = 0;
-int measure = 0;
+//int measure = 0;
 void update_note()
 {
+//    offset = 0;
+//    step = stanzas[measure][iter] * N / RATE * (1 << 16);
+//    iter++;
+//    if (iter > sizeof stanzas[measure] / sizeof stanzas[measure][0])
+//    {
+//        iter = 0;
+//        measure++;
+//    }
+//    if (measure > 31)
+//    {
+//        measure = 0;
+//        iter = 0;
+//    }
+
     offset = 0;
-    step = stanzas[measure][iter] * N / RATE * (1 << 16);
+    step = music[iter] * N / RATE * (1 << 16);
     iter++;
-    if (iter > sizeof stanzas[measure] / sizeof stanzas[measure][0])
-    {
-        iter = 0;
-        measure++;
-    }
-    if (measure > 31)
-    {
-        measure = 0;
-        iter = 0;
-    }
+        if (iter > sizeof music / sizeof music[0])
+        {
+            iter = 0;
+            measure++;
+        }
 }
 
 
