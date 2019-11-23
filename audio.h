@@ -11,7 +11,7 @@
 //Base off 1 note being an eight note
 
 
-
+int freq_to_psc(float freq);
 
 //repeat stan 13,stan 14, stan 13, stan 15
 
@@ -26,7 +26,7 @@
 #define F2 87.31
 #define F2s 92.50
 #define G2 98.00
-#define G2s 103.83
+#define G2s 103.83int freq_to_psc(float freq)
 #define A2 110
 #define A2s 116.54
 #define B2 123.47

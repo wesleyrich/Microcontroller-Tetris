@@ -19,7 +19,7 @@ void init_wavetable(void)
 {
   int x;
   for(x=0; x<N; x++)
-    wavetable[x] = 32767 * sin(2 * M_PI * x / N);
+	  wavetable[x] = (32767 * sin(x * 2 * M_PI / N) +32768)/16;
 }
 
 float stan_1[7] = {B5,C6s,D6,E6,F6s,D6,F6s};
@@ -42,22 +42,23 @@ float stan_14[6] = {D5,A4s,D5,C5,A4s,C5};
 float stan_15[5] = {D5,A4s,D5,C5,C5};
 //https://pages.mtu.edu/~suits/notefreqs.html
 
+//133 notes
 float * stanzas[31] = {stan_1,stan_2,stan_3,stan_4,stan_1,stan_2,stan_3,stan_8,stan_9,stan_10,stan_11,stan_12,stan_9,stan_10,stan_11,stan_12,stan_13,stan_14,stan_13,stan_15,stan_13,stan_14,stan_13,stan_15,stan_9,stan_10,stan_11,stan_12,stan_9,stan_10,stan_11,stan_12};
-float  music[133] = {B5,C6s,D6,E6,F6s,D6,F6s,F6,C6s,F6,E6,C6,E6,B5,C6s,D6,E6,F6s,D6,F6s,B6,A6,F6s,D6,F6s,A6,A6,B5,C6s,D6,E6,F6s,D6,F6s,F6,C6s,F6,E6,C6,E6,B5,C6s,D6,E6,F6s,D6,F6s,B6,
-        A6,F6s,D6,C6s,B6,B6,B3,C4s,D4,E4,F4s,F4,D4s,F4,C4s,F4,E4,C4,E4,B3,C4s,D4,E4,F4s,D4,F4s,B4,A4,F4s,D4,F4s,A4,A4,B3,C4s,D4,E4,F4s,F4,D4s,F4,C4s,F4,E4,C4,E4,
-        B3,C4s,D4,E4,F4s,D4,F4s,B4,A4,F4s,D4,F4s,A4,A4,F4s,G4s,A4s,B4,C5s,A4,C5s,D5,A4s,D5,C5,A4s,C5,F4s,G4s,A4s,B4,C5s,A4,C5s,D5,A4s,D5,C5,C5};
+float  music[] = {B5,C6s,D6,E6,F6s,D6,F6s,0,F6,C6s,F6,0,E6,C6,E6,0,B5,C6s,D6,E6,F6s,D6,F6s,B6,A6,F6s,D6,F6s,A6,A6,0,B5,C6s,D6,E6,F6s,D6,F6s,0,F6,C6s,F6,E6,C6,E6,0,
+		B5,C6s,D6,E6,F6s,D6,F6s,B6,0,A6,F6s,D6,C6s,B6,B6,0,B3,C4s,D4,E4,F4s,F4,D4s,0,F4,C4s,F4,E4,C4,E4,0,B3,C4s,D4,E4,F4s,D4,F4s,B4,0,
+		A4,F4s,D4,F4s,A4,A4,0,B3,C4s,D4,E4,F4s,F4,D4s,0,F4,C4s,F4,E4,C4,E4,0,
+		B3,C4s,D4,E4,F4s,D4,F4s,B4,0,A4,F4s,D4,F4s,A4,A4,0,
+		F4s,G4s,A4s,B4,C5s,A4,C5s,0,D5,A4s,D5,C5,A4s,C5,0,F4s,G4s,A4s,B4,C5s,0,A4,C5s,D5,A4s,D5,C5,C5};
 int offset = 0;
 int step = B5 * N / RATE * (1 << 16);
 
-void setup_gpio() {
-    /* Student code goes here */
+
+void setup_dac() {
+
     RCC -> AHBENR |= RCC_AHBENR_GPIOBEN;
     GPIOB ->MODER &= GPIO_MODER_MODER4;
     GPIOB ->MODER |= GPIO_MODER_MODER4;
 
-}
-
-void setup_dac() {
     RCC -> APB1ENR |= RCC_APB1ENR_DACEN;
     DAC ->CR &= ~DAC_CR_EN1;
     DAC ->CR &= ~DAC_CR_BOFF1;
@@ -95,51 +96,84 @@ void setup_adc() {
 //https://musescore.com/torbybrand/in-the-hall-of-the-mountain-king
 
 void TIM6_DAC_IRQHandler() {
-    DAC->SWTRIGR |= DAC_SWTRIGR_SWTRIG1;
-       TIM6->SR &= ~TIM_SR_UIF;
-
-       offset += step;
-       if ((offset>>16) >= N)
-       {
-           offset -= N<<16;
-       }
-   int sample = wavetable[offset>>16];
-   sample = sample /16 + 2048;
-   DAC->DHR12R1 = sample;
+//    DAC->SWTRIGR |= DAC_SWTRIGR_SWTRIG1;
+//       TIM6->SR &= ~TIM_SR_UIF;
+//
+//       offset += step;
+//       if ((offset>>16) >= N)
+//       {
+//           offset -= N<<16;
+//       }
+//   int sample = wavetable[offset>>16];
+//   sample = sample /16 + 2048;
+//   DAC->DHR12R1 = sample;
 }
 
 void test_audio(){
-    setup_gpio();
       setup_dac();
       init_wavetable();
-      setup_timer6();
+      setup_dma();
+	  reint_timer();
+      //setup_timer6();
 }
 int iter = 0;
 //int measure = 0;
 void update_note()
 {
-//    offset = 0;
-//    step = stanzas[measure][iter] * N / RATE * (1 << 16);
-//    iter++;
-//    if (iter > sizeof stanzas[measure] / sizeof stanzas[measure][0])
-//    {
-//        iter = 0;
-//        measure++;
-//    }
-//    if (measure > 31)
-//    {
-//        measure = 0;
-//        iter = 0;
-//    }
 
-    offset = 0;
-    step = music[iter] * N / RATE * (1 << 16);
-    iter++;
-        if (iter > sizeof music / sizeof music[0])
-        {
-            iter = 0;
-            measure++;
-        }
+//    offset = 0;
+//    step = music[iter] * N / RATE * (1 << 16);
+//    iter++;
+//        if (iter > sizeof music / sizeof music[0])
+//        {
+//            iter = 0;
+//        }
+
+	TIM15->PSC = freq_to_psc(music[iter]);
+	iter++;
+	if (iter > sizeof music / sizeof music[0])
+	{
+		iter = 0;
+	}
 }
 
+void setup_dma(){
+	RCC -> AHBENR |= RCC_AHBENR_DMA1EN;
+	    DMA1_Channel5 -> CCR &= ~(DMA_CCR_EN);
+	    DMA1_Channel5 -> CMAR = (uint32_t) (wavetable);
+	    DMA1_Channel5 -> CPAR = (uint32_t) &(DAC->DHR12R1);
+	    DMA1_Channel5 -> CNDTR = N;
+	    DMA1_Channel5 -> CCR &= ~(DMA_CCR_MSIZE |DMA_CCR_PSIZE);
+	    DMA1_Channel5 -> CCR |= DMA_CCR_MSIZE_0 | DMA_CCR_PSIZE_0;
+	    DMA1_Channel5 -> CCR  &= ~(DMA_CCR_MEM2MEM);
+	    DMA1_Channel5 -> CCR |= DMA_CCR_MINC | DMA_CCR_CIRC | DMA_CCR_DIR;
+	    DMA1_Channel5 -> CCR |= DMA_CCR_EN;
+
+}
+
+void reint_timer()
+{
+ RCC -> APB2ENR |= RCC_APB2ENR_TIM15EN;
+ TIM15 -> CR1 &= ~(TIM_CR1_CEN);
+ TIM15 -> PSC = 92 - 1;
+ TIM15 -> ARR = 2 - 1;
+ TIM15 -> CR2 &= ~(TIM_CR2_MMS);
+ TIM15 -> CR2 |= TIM_CR2_MMS_1;
+ TIM15 -> DIER |= TIM_DIER_UDE;
+ TIM15 -> CR1 |= TIM_CR1_CEN;
+
+ RCC -> APB1ENR |= RCC_APB1ENR_DACEN;
+ DAC -> CR &= ~(DAC_CR_TSEL1);
+ DAC -> CR |= DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0;
+ DAC -> CR |= DAC_CR_TEN1;
+ //DAC -> CR |= DAC_CR_EN1;
+
+
+}
+
+int freq_to_psc(float freq)
+{
+
+	return (int)(24000 / freq);
+}
 

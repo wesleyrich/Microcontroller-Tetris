@@ -96,8 +96,8 @@
 uint8_t * shapes[28];
 
 const uint8_t gravity[] = { 48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4,
-        4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1 };
+		4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1 };
 uint8_t * piece_dictionary[28];
 uint8_t level = 0;
 uint8_t lines_cleared = 0;
@@ -110,348 +110,380 @@ int ending = 0;
 
 void initialize_game() // stuff to do at startup
 {
-    initialize_pixels();
-    initialize_symbols();
-    addScore(-getScore());
-    draw_score();
-    level = 0;
-    lines_cleared = 0;
-    draw_level(level);
-    piece_dictionary[0] = *I0;
-    piece_dictionary[1] = *I1;
-    piece_dictionary[2] = *I2;
-    piece_dictionary[3] = *I3;
-    piece_dictionary[4] = *T0;
-    piece_dictionary[5] = *T1;
-    piece_dictionary[6] = *T2;
-    piece_dictionary[7] = *T3;
-    piece_dictionary[8] = *O0;
-    piece_dictionary[9] = *O1;
-    piece_dictionary[10] = *O2;
-    piece_dictionary[11] = *O3;
-    piece_dictionary[12] = *L0;
-    piece_dictionary[13] = *L1;
-    piece_dictionary[14] = *L2;
-    piece_dictionary[15] = *L3;
-    piece_dictionary[16] = *J0;
-    piece_dictionary[17] = *J1;
-    piece_dictionary[18] = *J2;
-    piece_dictionary[19] = *J3;
-    piece_dictionary[20] = *Z0;
-    piece_dictionary[21] = *Z1;
-    piece_dictionary[22] = *Z2;
-    piece_dictionary[23] = *Z3;
-    piece_dictionary[24] = *S0;
-    piece_dictionary[25] = *S1;
-    piece_dictionary[26] = *S2;
-    piece_dictionary[27] = *S3;
-    rng = LFSR(rng);
-    for (int i = 0; i < 3; i++) {
-        int num = get_piece();
-        next_piece[i].type = num;
-        next_piece[i].color = (int) (num / 4);
-        next_piece[i].shape = (piece_dictionary[num]);
-        next_piece[i].x = 23;
-        next_piece[i].y = 43 - i * 10;
-        draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y,
-                next_piece[i].color);
-    }
+	initialize_pixels();
+	initialize_symbols();
+	addScore(-getScore());
+	draw_score();
+	level = 0;
+	lines_cleared = 0;
+	draw_level(level);
+	piece_dictionary[0] = *I0;
+	piece_dictionary[1] = *I1;
+	piece_dictionary[2] = *I2;
+	piece_dictionary[3] = *I3;
+	piece_dictionary[4] = *T0;
+	piece_dictionary[5] = *T1;
+	piece_dictionary[6] = *T2;
+	piece_dictionary[7] = *T3;
+	piece_dictionary[8] = *O0;
+	piece_dictionary[9] = *O1;
+	piece_dictionary[10] = *O2;
+	piece_dictionary[11] = *O3;
+	piece_dictionary[12] = *L0;
+	piece_dictionary[13] = *L1;
+	piece_dictionary[14] = *L2;
+	piece_dictionary[15] = *L3;
+	piece_dictionary[16] = *J0;
+	piece_dictionary[17] = *J1;
+	piece_dictionary[18] = *J2;
+	piece_dictionary[19] = *J3;
+	piece_dictionary[20] = *Z0;
+	piece_dictionary[21] = *Z1;
+	piece_dictionary[22] = *Z2;
+	piece_dictionary[23] = *Z3;
+	piece_dictionary[24] = *S0;
+	piece_dictionary[25] = *S1;
+	piece_dictionary[26] = *S2;
+	piece_dictionary[27] = *S3;
+	rng = LFSR(rng);
+	for (int i = 0; i < 3; i++) {
+		int num = get_piece();
+		next_piece[i].type = num;
+		next_piece[i].color = (int) (num / 4);
+		next_piece[i].shape = (piece_dictionary[num]);
+		next_piece[i].x = 23;
+		next_piece[i].y = 43 - i * 10;
+		draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y,
+				next_piece[i].color);
+	}
 
-    spawn_piece();
-    game_active = 1;
+	spawn_piece();
+	game_active = 1;
 }
 
 int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
 int count_to_2 = 48;
+int count_to_music = 48;
 int game_counter = 0;
 int game_counter_2 = 0;
+int music_counter = 0;
 
-void update_tetris() // game goes in here
-{
-    if (game_counter < count_to) {
-        game_counter++;
-        rng = LFSR(rng);
-        return;
-    }
-    game_counter = 0;
+	void update_tetris() // game goes in here
+	{
+		if (game_counter < count_to) {
+			game_counter++;
+			rng = LFSR(rng);
+			return;
+		}
+		game_counter = 0;
 
-    if (game_counter_2 < count_to_2) {
-        game_counter_2++;
-        return;
-    }
-    // do a frame
-    if (game_active == 0) {
-        rick();
-        return;
-    }
-    //update music
-    update_note();
-    update_piece();
-    game_counter_2 = 0;
-}
-void handle_input() {
-    if (getState() != 1) {
-        return;
-    }
-    if (get_buttons(but_SEL)) {
-        setState(0);
-    }
-    draw_piece(piece.shape, piece.x, piece.y, -1);
-    if (get_buttons(but_LEFT) && !check_collision_xneg(piece.shape)) {
-        piece.x -= 2;
-    } else if (get_buttons(but_RIGHT) && !check_collision_xpos(piece.shape)) {
-        piece.x += 2;
-    }
-    if (get_buttons(but_B)) {
-        rotate_piece(0);
-    } else if (get_buttons(but_A)) {
-        rotate_piece(1);
-    }
-    if (get_buttons(but_START)) {
-        draw_piece(piece.shape, piece.x, piece.y, -1);
-        initialize_game();
-    }
-    if (get_buttons_held(but_DOWN)) {
-        count_to_2 = 1;
-    } else {
-        count_to_2 = gravity[level];
-    }
+		if (music_counter < count_to_music) {
+			music_counter++;
+		} else {
+			music_counter = 0;
+			update_note();
+			count_to_music = gravity[level];
+		}
 
-    draw_piece(piece.shape, piece.x, piece.y, piece.color);
-}
+		if (game_counter_2 < count_to_2) {
+			game_counter_2++;
+			return;
+		}
 
-void rotate_piece(uint8_t dir) {
-    uint8_t type = piece.type;
-    if (dir == 0) // rotate left
-            {
-        if (type % 4 == 0) {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    int k = getPixels(piece.x + (2 * j + 2), piece.y - (2 * i));
-                    uint8_t x = (&piece_dictionary[piece.type + 3])[i][j];
-                    uint8_t y = (&piece_dictionary[piece.type])[i][j];
-                    if ((x != y) && (x == 1) && (k < 7))
-                        return;
-                }
-            }
-            piece.type += 3;
-            piece.shape = (piece_dictionary[piece.type]);
-        } else {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    int k = getPixels(piece.x + (2 * j + 2), piece.y - (2 * i));
-                    uint8_t x = (&piece_dictionary[piece.type - 1])[i][j];
-                    uint8_t y = (&piece_dictionary[piece.type])[i][j];
-                    if ((x != y) && (x == 1) && (k < 7))
-                        return;
-                }
-            }
-            piece.type -= 1;
-            piece.shape = (piece_dictionary[piece.type]);
-        }
-    }
-    if (dir == 1) // rotate right
-            {
-        if (type % 4 == 3) {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    int k = getPixels(piece.x + (2 * j + 2), piece.y - (2 * i));
-                    //                  if ((piece_dictionary[piece.type-3][i][j] != piece_dictionary[piece.type][i][j])
-                    //                          && (piece_dictionary[piece.type-3][i][j] == 1) && (k < 7)) return;
-                    uint8_t x = (&piece_dictionary[piece.type - 3])[i][j];
-                    uint8_t y = (&piece_dictionary[piece.type])[i][j];
-                    if ((x != y) && (x == 1) && (k < 7))
-                        return;
-                }
-            }
-            piece.type -= 3;
-            piece.shape = (piece_dictionary[piece.type]);
-        } else {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    int k = getPixels(piece.x + (2 * j + 2), piece.y - (2 * i));
-                    //                    if ((piece_dictionary[piece.type-3][i][j] != piece_dictionary[piece.type][i][j])
-                    //                            && (piece_dictionary[piece.type-3][i][j] == 1) && (k < 7)) return;
-                    uint8_t x = (&piece_dictionary[piece.type + 1])[i][j];
-                    uint8_t y = (&piece_dictionary[piece.type])[i][j];
-                    if ((x != y) && (x == 1) && (k < 7))
-                        return;
-                }
-            }
-            piece.type += 1;
-            piece.shape = (piece_dictionary[piece.type]);
-        }
-    }
-}
+		// do a frame
+		if (game_active == 0) {
+			rick();
+			return;
+		}
 
-void update_piece() {
-    draw_piece(piece.shape, piece.x, piece.y, -1);
-    if (check_collision_y(piece.shape)) {
-        draw_piece(piece.shape, piece.x, piece.y, piece.color);
-        check_line_clear();
-        game_active = check_gameover();
-        count_to_2 = gravity[level];
-        spawn_piece();
-        return;
-    }
-    if (count_to_2 == 1)
-    {
-        addScore(1);
-    }
-    piece.y -= 2;
+		update_piece();
+		game_counter_2 = 0;
+	}
+	void handle_input() {
+		if (getState() != 1) {
+			return;
+		}
+		if (get_buttons(but_SEL)) {
+			setState(0);
+		}
+		draw_piece(piece.shape, piece.x, piece.y, -1);
+		if (get_buttons(but_LEFT) && !check_collision_xneg(piece.shape)) {
+			piece.x -= 2;
+		} else if (get_buttons(but_RIGHT) && !check_collision_xpos(piece.shape)) {
+			piece.x += 2;
+		}
+		if (get_buttons(but_B)) {
+			rotate_piece(0);
+		} else if (get_buttons(but_A)) {
+			rotate_piece(1);
+		}
+		if (get_buttons(but_START)) {
+			draw_piece(piece.shape, piece.x, piece.y, -1);
+			initialize_game();
+		}
+		if (get_buttons_held(but_DOWN)) {
+			count_to_2 = 1;
+		} else {
+			count_to_2 = gravity[level];
+		}
 
-    draw_piece(piece.shape, piece.x, piece.y, piece.color);
-}
+		draw_piece(piece.shape, piece.x, piece.y, piece.color);
+	}
 
-void spawn_piece() {
-    piece = next_piece[0];
-    piece.x = 9; // should be 9 we changed this to make it testable
-    piece.y = 54;
-    for (int i = 0; i < 3; i++) {
-        draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y, 7);
-    }
-    for (int i = 0; i < 2; i++) {
-        next_piece[i].shape = next_piece[i + 1].shape;
-        next_piece[i].color = next_piece[i + 1].color;
-        next_piece[i].type = next_piece[i + 1].type;
-    }
-    int num = get_piece();
-    next_piece[2].type = num;
-    next_piece[2].color = (int) (num / 4);
-    next_piece[2].shape = (piece_dictionary[num]);
-    draw_piece(piece.shape, piece.x, piece.y, piece.color);
-    for (int i = 0; i < 3; i++) {
-        draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y,
-                next_piece[i].color);
-    }
-}
+	void rotate_piece(uint8_t dir) {
+		uint8_t type = piece.type;
+		draw_piece(piece.shape, piece.x, piece.y, -1);
 
-void update_level() {
-    level = lines_cleared / 5;
-    if (level > 30) {
-        level = 30;
-    }
-    draw_level(level);
-}
+		if (dir == 0) // rotate left
+		{
+			if (type % 4 == 0) {
+				for (int y = 0; y < 4; y++) {
+					for (int x = 0; x < 4; x++) {
+						// want to check of the current piece.shape overlaps with any pixels
+						for (int z = 0; z < 2; z++)
+						{
 
-int check_collision_y(uint8_t shape[4][4]) // will return a 1 if there is a collision with any other pixels
-{
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            int k = getPixels(piece.x + (2 * j), piece.y - (2 * i) - 2);
-            if (shape[i][j] == 1 && (k < 7))
-                return 1;
-        }
-    }
-    return 0;
-}
+						}
+						if (getPixels(piece.x + 2 * x, piece.y - 2 * y) < 7
+						&& (piece_dictionary[piece.type + 3])[x + y*4]) {
+							// there is an overlap -> dont rotate
+							draw_piece(piece.shape, piece.x, piece.y, piece.color);
+							return;
+						}
+					}
+				}
+				piece.type += 3;
+				piece.shape = (piece_dictionary[piece.type]);
+				draw_piece(piece.shape, piece.x, piece.y, piece.color);
+				return;
+			} else {
 
-int check_collision_xpos(uint8_t shape[4][4]) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            int k = getPixels(piece.x + (2 * j) + 2, piece.y - (2 * i));
-            if (shape[i][j] == 1 && (k < 7))
-                return 1;
-        }
-    }
-    return 0;
-}
+				for (int y = 0; y < 4; y++) {
+					for (int x = 0; x < 4; x++) {
+						// want to check of the current piece.shape overlaps with any pixels
+						if (getPixels(piece.x + 2 * x, piece.y - 2 * y) < 7
+						&& (piece_dictionary[piece.type - 1])[x + y*4]) {
+							// there is an overlap -> dont rotate
+							draw_piece(piece.shape, piece.x, piece.y, piece.color);
+							return;
+						}
+					}
+				}
+				piece.type -= 1;
+				piece.shape = (piece_dictionary[piece.type]);
+				draw_piece(piece.shape, piece.x, piece.y, piece.color);
+				return;
+			}
+		}
 
-int check_collision_xneg(uint8_t shape[4][4]) {
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            int k = getPixels(piece.x + (2 * j) - 1, piece.y - (2 * i));
-            if (shape[i][j] == 1 && (k < 7))
-                return 1;
-        }
-    }
-    return 0;
-}
+		if (dir == 1) // rotate right
+		{
 
-void check_line_clear() {
-    uint8_t rows[20];
-    for (int y = 0; y < 40; y += 2) {
-        rows[y / 2] = 1;
-        for (int x = 0; x < 20; x += 2) {
-            if (getPixels(x + 1, y + 15) > 6) {
-                rows[y / 2] = 0;
-                break;
-            }
-        }
-    }
-    clear_rows(rows);
-}
+			if (type % 4 == 3) {
+				for (int y = 0; y < 4; y++) {
+					for (int x = 0; x < 4; x++) {
+						// want to check of the current piece.shape overlaps with any pixels
+						if (getPixels(piece.x + 2 * x, piece.y - 2 * y) < 7
+						&& (piece_dictionary[piece.type - 3])[x + y*4]) {
+							// there is an overlap -> dont rotate
+							draw_piece(piece.shape, piece.x, piece.y, piece.color);
+							return;
+						}
+					}
+				}
+				piece.type -= 3;
+				piece.shape = (piece_dictionary[piece.type]);
+				draw_piece(piece.shape, piece.x, piece.y, piece.color);
+				return;
+			} else {
 
-void clear_rows(uint8_t rows[20]) {
-    int lines = 0;
-    int offset = 0;
-    for (int y = 0; y < 40; y += 2) {
-        if (rows[(y + offset) / 2] == 1) {
-            offset += 2;
-            lines++;
-            for (int i = 0; i < 20; i++) {
-                for (int j = 0; j < (40 - y - 2); j++) {
-                    draw(i + 1, j + y + 15, getPixels(i + 1, j + y + 17));
-                }
-            }
-            y -= 2;
-        }
-    }
-    lines_cleared += lines;
-    switch (lines) {
-    case 1:
-        addScore(40);
-        break;
-    case 2:
-        addScore(100);
-        break;
-    case 3:
-        addScore(300);
-        break;
-    case 4:
-        addScore(1200);
-        break;
-    default:
-        break;
-    }
-    draw_score();
-    update_level();
-}
+				for (int y = 0; y < 4; y++) {
+					for (int x = 0; x < 4; x++) {
+						// want to check of the current piece.shape overlaps with any pixels
+						int k = getPixels(piece.x + 2*x, piece.y - 2*y);
+						int l = (piece_dictionary[piece.type + 1])[x + y * 4];
+						if (k < 7 && l) {
+							// there is an overlap -> dont rotate
+							draw_piece(piece.shape, piece.x, piece.y, piece.color);
+							return;
+						}
+					}
+				}
+				piece.type += 1;
+				piece.shape = (piece_dictionary[piece.type]);
+				draw_piece(piece.shape, piece.x, piece.y, piece.color);
+				return;
+			}
+		}
+	}
+	void update_piece() {
+		draw_piece(piece.shape, piece.x, piece.y, -1);
+		if (check_collision_y(piece.shape)) {
+			draw_piece(piece.shape, piece.x, piece.y, piece.color);
+			check_line_clear();
+			game_active = check_gameover();
+			count_to_2 = gravity[level];
+			spawn_piece();
+			return;
+		}
+		if (count_to_2 == 1) {
+			addScore(1);
+		}
+		piece.y -= 2;
 
-int check_gameover() {
-    ending = rng % 2;
-    for (int i = 9; i < 16; i++) {
-        if (getPixels(i, 54) < 7)
-            return 0;
-    }
-    return 1;
-}
+		draw_piece(piece.shape, piece.x, piece.y, piece.color);
+	}
 
-int get_piece() {
-    uint8_t p = rng % 28; //representing our tetromino
+	void spawn_piece() {
+		piece = next_piece[0];
+		piece.x = 9; // should be 9 we changed this to make it testable
+		piece.y = 54;
+		for (int i = 0; i < 3; i++) {
+			draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y,
+			7);
+		}
+		for (int i = 0; i < 2; i++) {
+			next_piece[i].shape = next_piece[i + 1].shape;
+			next_piece[i].color = next_piece[i + 1].color;
+			next_piece[i].type = next_piece[i + 1].type;
+		}
+		int num = get_piece();
+		next_piece[2].type = num;
+		next_piece[2].color = (int) (num / 4);
+		next_piece[2].shape = (piece_dictionary[num]);
+		draw_piece(piece.shape, piece.x, piece.y, piece.color);
+		for (int i = 0; i < 3; i++) {
+			draw_piece(next_piece[i].shape, next_piece[i].x, next_piece[i].y,
+			next_piece[i].color);
+		}
+	}
 
-    while ((p / 4) == prev_piece) {
-        rng = LFSR(rng);
-        p = rng % 28;
-    }
-    prev_piece = p / 4;
+	void update_level() {
+		level = lines_cleared / 5;
+		if (level > 30) {
+			level = 30;
+		}
+		draw_level(level);
+	}
 
-    return (p);
-}
+	int check_collision_y(uint8_t shape[4][4]) // will return a 1 if there is a collision with any other pixels
+	{
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				int k = getPixels(piece.x + (2 * j), piece.y - (2 * i) - 2);
+				if (shape[i][j] == 1 && (k < 7))
+				return 1;
+			}
+		}
+		return 0;
+	}
 
-int LFSR(int init) {
-    return ((((init >> 9) & 1) ^ ((init >> 1) & 1)) << 15) | (init >> 1);
-}
+	int check_collision_xpos(uint8_t shape[4][4]) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				int k = getPixels(piece.x + (2 * j) + 2, piece.y - (2 * i));
+				if (shape[i][j] == 1 && (k < 7))
+				return 1;
+			}
+		}
+		return 0;
+	}
 
-void rick() {
-    for (int row = 15; row < 55; row++) {
-        for (int col = 1; col < 21; col++) {
-            draw(col, row, getPixels(col, row + 1));
-        }
-    }
-    if (ending) {
-        for (int col = 1; col < 21; col++) {
-            draw(col, 54, 7);
-        }
-    }
-}
+	int check_collision_xneg(uint8_t shape[4][4]) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				int k = getPixels(piece.x + (2 * j) - 1, piece.y - (2 * i));
+				if (shape[i][j] == 1 && (k < 7))
+				return 1;
+			}
+		}
+		return 0;
+	}
+
+	void check_line_clear() {
+		uint8_t rows[20];
+		for (int y = 0; y < 40; y += 2) {
+			rows[y / 2] = 1;
+			for (int x = 0; x < 20; x += 2) {
+				if (getPixels(x + 1, y + 15) > 6) {
+					rows[y / 2] = 0;
+					break;
+				}
+			}
+		}
+		clear_rows(rows);
+	}
+
+	void clear_rows(uint8_t rows[20]) {
+		int lines = 0;
+		int offset = 0;
+		for (int y = 0; y < 40; y += 2) {
+			if (rows[(y + offset) / 2] == 1) {
+				offset += 2;
+				lines++;
+				for (int i = 0; i < 20; i++) {
+					for (int j = 0; j < (40 - y - 2); j++) {
+						draw(i + 1, j + y + 15, getPixels(i + 1, j + y + 17));
+					}
+				}
+				y -= 2;
+			}
+		}
+		lines_cleared += lines;
+		switch (lines) {
+			case 1:
+			addScore(40);
+			break;
+			case 2:
+			addScore(100);
+			break;
+			case 3:
+			addScore(300);
+			break;
+			case 4:
+			addScore(1200);
+			break;
+			default:
+			break;
+		}
+		draw_score();
+		update_level();
+	}
+
+	int check_gameover() {
+		ending = rng % 2;
+		for (int i = 9; i < 16; i++) {
+			if (getPixels(i, 54) < 7)
+			return 0;
+		}
+		return 1;
+	}
+
+	int get_piece() {
+		uint8_t p = rng % 28; //representing our tetromino
+
+		while ((p / 4) == prev_piece) {
+			rng = LFSR(rng);
+			p = rng % 28;
+		}
+		prev_piece = p / 4;
+
+		return (p);
+	}
+
+	int LFSR(int init) {
+		return ((((init >> 9) & 1) ^ ((init >> 1) & 1)) << 15) | (init >> 1);
+	}
+
+	void rick() {
+		for (int row = 15; row < 55; row++) {
+			for (int col = 1; col < 21; col++) {
+				draw(col, row, getPixels(col, row + 1));
+			}
+		}
+		if (ending) {
+			for (int col = 1; col < 21; col++) {
+				draw(col, 54, 7);
+			}
+		}
+	}
