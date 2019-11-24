@@ -8,16 +8,10 @@
 #ifndef MINIPROJECT_AUDIO_H_
 #define MINIPROJECT_AUDIO_H_
 //
-//Base off 1 note being an eight note
-
 
 int freq_to_psc(float freq);
 
-//repeat stan 13,stan 14, stan 13, stan 15
-
-//repeat 9 10 11 12, then 9 10 11 12
-
-
+//https://pages.mtu.edu/~suits/notefreqs.html
 #define C2 65.41
 #define C2s 69.30
 #define D2 73.42
@@ -63,7 +57,8 @@ int freq_to_psc(float freq);
 #define F5s 739.99
 #define G5 783.99
 #define G5s 830.61
-#define A5 932.33
+#define A5 880.00
+#define A5s 932.33
 #define B5 987.77
 #define C6 1046.50
 #define C6s 1108.73
@@ -76,8 +71,5 @@ int freq_to_psc(float freq);
 #define G6s 1661.22
 #define A6 1760.00
 #define B6 1864.66
-
-
-
 
 #endif /* MINIPROJECT_AUDIO_H_ */

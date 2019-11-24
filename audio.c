@@ -22,33 +22,24 @@ void init_wavetable(void)
 	  wavetable[x] = (32767 * sin(x * 2 * M_PI / N) +32768)/16;
 }
 
-float stan_1[7] = {B5,C6s,D6,E6,F6s,D6,F6s};
-//static const uint8_t stan_1[7] = {B5,C6s,D6,E6,F6s,D6,F6s};
-float stan_2[6] = {F6,C6s,F6,E6,C6,E6};
-float stan_3[8] = {B5,C6s,D6,E6,F6s,D6,F6s,B6};
-float stan_4 [6]= {A6,F6s,D6,F6s,A6,A6};
-//then go back to stan_1 and stan_2 and stan_3
-float stan_8[6] = {A6,F6s,D6,C6s,B6,B6};
-//go down to 3 octave
-float stan_9[7] = {B3,C4s,D4,E4,F4s,F4,D4s};
-float stan_10[6] = {F4,C4s,F4,E4,C4,E4};
-float stan_11[8] = {B3,C4s,D4,E4,F4s,D4,F4s,B4};
-float stan_12[6]= {A4,F4s,D4,F4s,A4,A4};
-//repeat stan9 stan10 stan11 stan12
-
-float stan_13[7] = {F4s,G4s,A4s,B4,C5s,A4,C5s};
-float stan_14[6] = {D5,A4s,D5,C5,A4s,C5};
-//repeat stan_13
-float stan_15[5] = {D5,A4s,D5,C5,C5};
-//https://pages.mtu.edu/~suits/notefreqs.html
-
 //133 notes
-float * stanzas[31] = {stan_1,stan_2,stan_3,stan_4,stan_1,stan_2,stan_3,stan_8,stan_9,stan_10,stan_11,stan_12,stan_9,stan_10,stan_11,stan_12,stan_13,stan_14,stan_13,stan_15,stan_13,stan_14,stan_13,stan_15,stan_9,stan_10,stan_11,stan_12,stan_9,stan_10,stan_11,stan_12};
 float  music[] = {B5,C6s,D6,E6,F6s,D6,F6s,0,F6,C6s,F6,0,E6,C6,E6,0,B5,C6s,D6,E6,F6s,D6,F6s,B6,A6,F6s,D6,F6s,A6,A6,0,B5,C6s,D6,E6,F6s,D6,F6s,0,F6,C6s,F6,E6,C6,E6,0,
 		B5,C6s,D6,E6,F6s,D6,F6s,B6,0,A6,F6s,D6,C6s,B6,B6,0,B3,C4s,D4,E4,F4s,F4,D4s,0,F4,C4s,F4,E4,C4,E4,0,B3,C4s,D4,E4,F4s,D4,F4s,B4,0,
 		A4,F4s,D4,F4s,A4,A4,0,B3,C4s,D4,E4,F4s,F4,D4s,0,F4,C4s,F4,E4,C4,E4,0,
 		B3,C4s,D4,E4,F4s,D4,F4s,B4,0,A4,F4s,D4,F4s,A4,A4,0,
 		F4s,G4s,A4s,B4,C5s,A4,C5s,0,D5,A4s,D5,C5,A4s,C5,0,F4s,G4s,A4s,B4,C5s,0,A4,C5s,D5,A4s,D5,C5,C5};
+
+float mountain_king[] = {B4,C4s,D4,E4,F4s,D4,F4s,0,F4,C4s,F4,0,E4,C4,E4,0,
+						 B4,C4s,D4,E4,F4s,D4,F4s,B5,A5,F4s,D4,F4s,A5,A5,0,0,  // repeat
+						 B4,C4s,D4,E4,F4s,D4,F4s,0,F4,C4s,F4,0,E4,C4,E4,0,
+						 B4,C4s,D4,E4,F4s,D4,F4s,B4,A4,F4s,D4,F4s,A4,A4,0,0,  // move up a fifth
+						 F4s,G4s,A5s,B5,C5s,A5s,C5s,0,D5,A5s,D5,0,C5s,A5s,C5s,0,
+						 F4s,G4s,A5s,B5,C5s,A5s,C5s,0,D5,A5s,D5,0,C5s,C5s,0,  // repeat
+						 F4s,G4s,A5s,B5,C5s,A5s,C5s,0,D5,A5s,D5,0,C5s,A5s,C5s,0,
+						 F4s,G4s,A5s,B5,C5s,A5s,C5s,0,D5,A5s,D5,0,C5s,C5s,0,  // move up the rest of octave
+						 B5,C5s,D5,E5,F5s,D5,F5s,0,F5,C5s,F5,0,E5,C5,E5,0,
+						 B5,C5s,D5,E5,F5s,D5,F5s,B6,A6,F5s,D5,F5s,A6,A6,0,0}
+
 int offset = 0;
 int step = B5 * N / RATE * (1 << 16);
 
