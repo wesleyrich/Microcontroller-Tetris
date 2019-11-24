@@ -23,6 +23,7 @@
 #include "state_manager.h"
 #include "eeprom.h"
 #include "audio.h"
+#include "leaderboard.h"
 
 //#include "pieces.h"
 
@@ -45,8 +46,8 @@ int main(void)
     //int nscore = read_EEPROM(44);
 
 
-//    initialize_eeprom();
-//    read_and_sort();
+    initialize_eeprom();
+    read_and_sort();
 
 	LED_pins_setup();
 	initialize_controller();
@@ -87,6 +88,9 @@ void TIM2_IRQHandler ()
 	case 1:
 	    update_tetris();
 	    break;
+	case 2:
+		update_leaderboard();
+		break;
 	}
 }
 

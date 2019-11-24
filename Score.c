@@ -73,73 +73,72 @@ void draw_number(const uint8_t shape[5][4], int x, int y, int color)
     }
 }
 
-void draw_score()
+void draw_score(int score, int x, int y, int color)// x = 27, y = 12
 {
 	draw_rect(8, 7, 32, 12, 7);
-    int x = 27;
+//    int x = 27;
     int count = 0;
-    int score = SCORE;
     while(score != 0)
     {
         int value = score % 10;
         switch(value)
         {
                     case 0:
-                        draw_number(Zero,x,12,2);
+                        draw_number(Zero,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 1:
-                        draw_number(One,x,12,2);
+                        draw_number(One,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 2:
-                        draw_number(Two,x,12,2);
+                        draw_number(Two,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 3:
-                        draw_number(Three,x,12,2);
+                        draw_number(Three,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 4:
-                        draw_number(Four,x,12,2);
+                        draw_number(Four,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 5:
-                        draw_number(Five,x,12,2);
+                        draw_number(Five,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 6:
-                        draw_number(Six,x,12,2);
+                        draw_number(Six,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 7:
-                        draw_number(Seven,x,12,2);
+                        draw_number(Seven,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 8:
-                        draw_number(Eight,x,12,2);
+                        draw_number(Eight,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
                         break;
                     case 9:
-                        draw_number(Nine,x,12,2);
+                        draw_number(Nine,x,y,color);
                         x = x-5;
                         count += 1;
                         score /= 10;
@@ -152,9 +151,90 @@ void draw_score()
 
     while(x>=7)
     {
-        draw_number(Zero,x,12,2);
+        draw_number(Zero,x,y,color);
         x -=5;
     }
+}
+
+void draw_rank(int rank, int x, int y, int color)
+{
+	int count = 0;
+	   while(rank != 0)
+	    {
+	        int value = rank % 10;
+	        switch(value)
+	        {
+	                    case 0:
+	                        draw_number(Zero,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 1:
+	                        draw_number(One,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 2:
+	                        draw_number(Two,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 3:
+	                        draw_number(Three,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 4:
+	                        draw_number(Four,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 5:
+	                        draw_number(Five,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 6:
+	                        draw_number(Six,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 7:
+	                        draw_number(Seven,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 8:
+	                        draw_number(Eight,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	                    case 9:
+	                        draw_number(Nine,x,y,color);
+	                        x = x-5;
+	                        rank /= 10;
+	                        count += 1;
+	                        break;
+	        }
+
+
+
+	    }
+
+	    while(count < 2)
+	    {
+	        draw_number(Zero,x,y,color);
+	        count +=1;
+	    }
 }
 
 void draw_level(int level)

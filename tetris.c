@@ -13,6 +13,7 @@
 #include "pieces.h"
 #include "controller.h"
 #include "audio.h"
+#include "eeprom.h"
 
 /*
  * GENERAL NOTES
@@ -113,7 +114,8 @@ void initialize_game() // stuff to do at startup
 	initialize_pixels();
 	initialize_symbols();
 	addScore(-getScore());
-	draw_score();
+	draw_score(get_highscores(0),27,6, 4);
+	draw_score(getScore(),27,12, 2);
 	level = 0;
 	lines_cleared = 0;
 	draw_level(level);
@@ -446,7 +448,7 @@ int music_counter = 0;
 			default:
 			break;
 		}
-		draw_score();
+		draw_score(getScore(), 27, 12, 2);
 		update_level();
 	}
 

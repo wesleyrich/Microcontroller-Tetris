@@ -13,6 +13,7 @@
 #include "pieces.h"
 #include "controller.h"
 #include "menu.h"
+#include "leaderboard.h"
 
 
 void initialize_controller()
@@ -99,6 +100,7 @@ void update_controller()
 		{
 			handle_input();
 			handle_input_menu();
+			handle_input_leaderboard();
 			clear_buttons();
 		}
 	}

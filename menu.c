@@ -75,7 +75,7 @@ void handle_input_menu()
             setState(1);
             break;
         case 1: // LEADERBOARDS
-            //setState(2);
+            setState(2);
             break;
         case 2: // MUSIC
             //setState(3);

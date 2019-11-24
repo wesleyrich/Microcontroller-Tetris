@@ -12,6 +12,7 @@
 #include "tetris.h"
 #include "pieces.h"
 #include "controller.h"
+#include "stdint.h"
 
 volatile uint8_t pixels [32][64]; // x are the columns, y are the rows
 
