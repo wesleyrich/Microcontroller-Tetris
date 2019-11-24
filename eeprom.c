@@ -18,8 +18,8 @@
 #define WR 0
 #define RD 1
 
-uint32_t names [25];
-uint32_t highscores [25];
+uint32_t names [20];
+uint32_t highscores [20];
 
 
 uint32_t get_name (int index)
@@ -32,17 +32,28 @@ uint32_t get_highscores (int index)
     return highscores[index];
 }
 
+int get_address(uint32_t score)
+{
+    for (int i = 0; i < 40; i += 2)
+    {
+        if (score == read_EEPROM((i + 1) * 4))
+        {
+            return i * 4;
+        }
+    }
+}
+
 
 void read_and_sort()
 {
-    for (int i = 0; i < 50; i += 2)
+    for (int i = 0; i < 40; i += 2)
     {
         names[i / 2] = read_EEPROM(i * 4);
         highscores[i / 2] = read_EEPROM((i + 1) * 4);
     }
 
     int i, key1, key2, j;
-    for (i = 1; i < 25; i++)
+    for (i = 1; i < 20; i++)
     {
         key1 = highscores[i];
         key2 = names[i];
@@ -60,7 +71,6 @@ void read_and_sort()
         highscores[j + 1] = key1;
         names [j+1] = key2;
     }
-
 }
 
 void I2C1_waitidle() {
@@ -178,10 +188,18 @@ uint32_t read_EEPROM(uint16_t rd_addr) {
     I2C1_waitidle();
     I2C1_start(0x50, WR);
     int status = I2C1_senddata(write_buf, 2);
-    //if (status == FAIL) while(1);
+    while (status == FAIL)
+    {
+        I2C1_start(0x50, WR);
+        status = I2C1_senddata(write_buf, 2);
+    }
     I2C1_start(0x50, RD);
     status = I2C1_readdata(data, 4);
-    //if (status == FAIL) while(1);
+    while(status == FAIL)
+    {
+        I2C1_start(0x50, RD);
+        status = I2C1_readdata(data, 4);
+    }
     I2C1_stop();
     uint32_t frankensteined_data = (uint32_t) (data[3] + (data[2] << 8) + (data[1] << 16) + (data[0] << 24));
     if (status == 0) return frankensteined_data;  // if read was successful

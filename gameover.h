@@ -10,6 +10,5 @@
 
 void handle_input_gameover();
 void initialize_gameover();
-void draw_letter(uint8_t letter[5][4], int x, int y, int color);
 
 #endif /* MINIPROJECT_GAMEOVER_H_ */

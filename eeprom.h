@@ -21,5 +21,6 @@ uint32_t read_EEPROM(uint16_t rd_addr);
 void read_and_sort();
 uint32_t get_highscores (int index);
 uint32_t get_name (int index);
+int get_address(uint32_t score);
 
 #endif /* MINIPROJECT_EEPROM_H_ */

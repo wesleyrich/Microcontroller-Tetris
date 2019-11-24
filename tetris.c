@@ -105,7 +105,7 @@ uint8_t lines_cleared = 0;
 struct Piece piece;
 struct Piece next_piece[3];
 uint8_t prev_piece = 0;
-int rng = 12323; //feedback variable for the LSFR
+int rng = 24679; //feedback variable for the LSFR
 int game_active = 0;
 int ending = 0;
 
@@ -190,7 +190,7 @@ void initialize_game() // stuff to do at startup
 		} else {
 			music_counter = 0;
 			update_note();
-			count_to_music = gravity[level];
+			count_to_music = gravity[level] / 4 + 8;
 		}
 
 		if (game_counter_2 < count_to_2) {

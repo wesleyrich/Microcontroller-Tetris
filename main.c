@@ -30,30 +30,23 @@
 
 void tim2_setup();
 
+float temp_rng = 123;
+
 int main(void)
 {
-	//EEPROM TESTING
-	//initialize_eeprom();
-//	write_EEPROM(0x10, 0x69);
-//	int checking = read_EEPROM(0x10);
-   // for (int i = 0; i < 50; i+=2) // name -> score
-   // {
-       // write_EEPROM(i * 0x4, 100 * i);
-        //write_EEPROM((i+1) * 0x4, 50 * i);
-  //  }
-
-  //  int name = read_EEPROM(40);
-    //int nscore = read_EEPROM(44);
-
 
     initialize_eeprom();
     read_and_sort();
 
 	LED_pins_setup();
 	initialize_controller();
+
 	initialize_menu();
 	tim2_setup();
+
 	test_audio();
+
+
 	for(;;)
 	{
 	    update_led();
