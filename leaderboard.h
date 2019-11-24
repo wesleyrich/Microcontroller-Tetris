@@ -10,7 +10,6 @@
 #define MINIPROJECT_LEADERBOARD_H_
 
 void initialize_leaderboard();
-void update_leaderboard();
 void handle_input_leaderboard();
 void draw_letter(uint8_t letter[5][4], int x, int y, int color);
 

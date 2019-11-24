@@ -93,10 +93,7 @@ void draw_letter(uint8_t letter[5][4], int x, int y, int color)
 	}
 }
 
-void update_leaderboard()
-{
 
-}
 
 void handle_input_leaderboard()
 {

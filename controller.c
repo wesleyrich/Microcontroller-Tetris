@@ -14,6 +14,7 @@
 #include "controller.h"
 #include "menu.h"
 #include "leaderboard.h"
+#include "gameover.h"
 
 
 void initialize_controller()
@@ -101,6 +102,7 @@ void update_controller()
 			handle_input();
 			handle_input_menu();
 			handle_input_leaderboard();
+			handle_input_gameover();
 			clear_buttons();
 		}
 	}

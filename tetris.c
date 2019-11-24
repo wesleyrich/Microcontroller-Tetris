@@ -109,6 +109,15 @@ int rng = 12323; //feedback variable for the LSFR
 int game_active = 0;
 int ending = 0;
 
+int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
+int count_to_2 = 48;
+int count_to_music = 48;
+int game_counter = 0;
+int game_counter_2 = 0;
+int music_counter = 0;
+int rick_count_to = 100;
+int rick_counter = 0;
+
 void initialize_game() // stuff to do at startup
 {
 	initialize_pixels();
@@ -116,6 +125,8 @@ void initialize_game() // stuff to do at startup
 	addScore(-getScore());
 	draw_score(get_highscores(0),27,6, 4);
 	draw_score(getScore(),27,12, 2);
+	count_to_music = 48;
+	count_to_2 = 48;
 	level = 0;
 	lines_cleared = 0;
 	draw_level(level);
@@ -163,12 +174,7 @@ void initialize_game() // stuff to do at startup
 	game_active = 1;
 }
 
-int count_to = (TIM2_FREQ * (1 - LAG_FACTOR) / 120);
-int count_to_2 = 48;
-int count_to_music = 48;
-int game_counter = 0;
-int game_counter_2 = 0;
-int music_counter = 0;
+
 
 	void update_tetris() // game goes in here
 	{
@@ -206,7 +212,9 @@ int music_counter = 0;
 			return;
 		}
 		if (get_buttons(but_SEL)) {
+		    draw_piece(piece.shape, piece.x, piece.y, -1);
 			setState(0);
+			return;
 		}
 		draw_piece(piece.shape, piece.x, piece.y, -1);
 		if (get_buttons(but_LEFT) && !check_collision_xneg(piece.shape)) {
@@ -220,7 +228,7 @@ int music_counter = 0;
 			rotate_piece(1);
 		}
 		if (get_buttons(but_START)) {
-			draw_piece(piece.shape, piece.x, piece.y, -1);
+		    draw_piece(piece.shape, piece.x, piece.y, -1);
 			initialize_game();
 		}
 		if (get_buttons_held(but_DOWN)) {
@@ -478,6 +486,15 @@ int music_counter = 0;
 	}
 
 	void rick() {
+	    rick_counter++;
+	    if (rick_counter > 200)
+	    {
+	        // GO TO END OF GAME SCREEN
+	        rick_counter = 0;
+	        setState(5);
+	        return;
+
+	    }
 		for (int row = 15; row < 55; row++) {
 			for (int col = 1; col < 21; col++) {
 				draw(col, row, getPixels(col, row + 1));

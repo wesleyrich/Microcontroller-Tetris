@@ -31,5 +31,12 @@ void setState(int newstate) {
     case 2:
     	initialize_leaderboard();
     	break;
+    case 3:
+        break;
+    case 4:
+        break;
+    case 5:
+        initialize_gameover();
+        break;
     }
 }

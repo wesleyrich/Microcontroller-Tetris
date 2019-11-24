@@ -89,7 +89,7 @@ void TIM2_IRQHandler ()
 	    update_tetris();
 	    break;
 	case 2:
-		update_leaderboard();
+		//update_leaderboard();
 		break;
 	}
 }
