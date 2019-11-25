@@ -40,11 +40,11 @@ int main(void)
 
 	LED_pins_setup();
 	initialize_controller();
-
+    test_audio();
 	initialize_menu();
 	tim2_setup();
 
-	test_audio();
+
 
 
 	for(;;)

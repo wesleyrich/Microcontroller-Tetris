@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "audio.h"
+#include "menu.h"
 #define RATE 100000
 #define N 1000
 short int wavetable[N];
@@ -105,24 +106,27 @@ void test_audio(){
       init_wavetable();
       setup_dma();
 	  reint_timer();
-      //setup_timer6();
 }
 int iter = 0;
 //int measure = 0;
+
+void stop_note()
+{
+    TIM15->PSC = freq_to_psc(0);
+}
+
 void update_note()
 {
 
-//    offset = 0;
-//    step = music[iter] * N / RATE * (1 << 16);
-//    iter++;
-//        if (iter > sizeof music / sizeof music[0])
-//        {
-//            iter = 0;
-//        }
+    if (!get_music_state())
+    {
+        TIM15->PSC = freq_to_psc(0);
+        return;
+    }
 
 	TIM15->PSC = freq_to_psc(mountain_king[iter]);
 	iter++;
-	if (iter > sizeof mountain_king / sizeof mountain_king[0])
+	if (iter >= sizeof mountain_king / sizeof mountain_king[0])
 	{
 		iter = 0;
 	}

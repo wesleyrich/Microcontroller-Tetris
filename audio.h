@@ -10,6 +10,7 @@
 //
 
 int freq_to_psc(float freq);
+void stop_note();
 
 //https://pages.mtu.edu/~suits/notefreqs.html
 #define C2 65.41

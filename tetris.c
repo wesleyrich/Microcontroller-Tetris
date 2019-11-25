@@ -126,9 +126,23 @@ void initialize_game() // stuff to do at startup
 	draw_score(get_highscores(0),27,6, 4);
 	draw_score(getScore(),27,12, 2);
 	count_to_music = 48;
-	count_to_2 = 48;
-	level = 0;
-	lines_cleared = 0;
+
+	if(get_difficulty() == 0) {
+	    level = 0;
+	    lines_cleared = level * 5;
+	    count_to_2 = gravity[level];
+	}
+	else if(get_difficulty() == 1) {
+	    level = 7;
+	    lines_cleared = level * 5;
+	    count_to_2 = gravity[level];
+	}
+	else {
+	    level = 15;
+	    lines_cleared = level * 5;
+	    count_to_2 = gravity[level];
+	}
+
 	draw_level(level);
 	piece_dictionary[0] = *I0;
 	piece_dictionary[1] = *I1;

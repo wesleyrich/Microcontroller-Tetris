@@ -32,6 +32,7 @@ void setState(int newstate) {
     	initialize_leaderboard();
     	break;
     case 3:
+        //initialize_volume();
         break;
     case 4:
         break;

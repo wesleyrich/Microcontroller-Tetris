@@ -8,6 +8,7 @@
 #include "stm32f0_discovery.h"
 #include "stdint.h"
 #include "constants.h"
+#include "audio.h"
 #include "led_matrix.h"
 #include "tetris.h"
 #include "pieces.h"
@@ -18,6 +19,7 @@
 
 void initialize_menu() {
     // clear the screen
+    stop_note();
     draw_rect(0, 0, 32, 64, 7);
     // T
     draw_rect(2, 62, 6, 62, 0);
@@ -49,9 +51,10 @@ void initialize_menu() {
     draw_play_outline(6);
     draw_leaderboard_outline(6);
     draw_music_outline(6);
-    draw_credits_outline(6);
+    draw_difficulty_outline(6);
     draw_other_outline(6);
 
+    draw_music();
     change_selected();
 
 }
@@ -59,6 +62,23 @@ void initialize_menu() {
 uint8_t selected_color = 4;
 int last_selected = 0;
 int selected = 0;
+int music_on = 1;
+int difficulty = 0;
+
+int get_difficulty()
+{
+    return difficulty;
+}
+
+int get_music_state()
+{
+    return music_on;
+}
+
+void set_music_state(int state)
+{
+    music_on = state;
+}
 
 void handle_input_menu()
 {
@@ -78,8 +98,13 @@ void handle_input_menu()
             setState(2);
             break;
         case 2: // MUSIC
-            //setState(3);
+            music_on = !music_on;
+            draw_music();
             break;
+        case 3: //difficulty
+            if(difficulty == 2) difficulty = 0;
+            else difficulty++;
+            draw_difficulty();
         }
     }
 
@@ -109,7 +134,7 @@ void change_selected() {
         draw_music_outline(6);
         break;
     case 3:
-        draw_credits_outline(6);
+        draw_difficulty_outline(6);
         break;
     case 4:
         draw_other_outline(6);
@@ -126,7 +151,7 @@ void change_selected() {
         draw_music_outline(selected_color);
         break;
     case 3:
-        draw_credits_outline(selected_color);
+        draw_difficulty_outline(selected_color);
         break;
     case 4:
         draw_other_outline(selected_color);
@@ -134,6 +159,8 @@ void change_selected() {
     }
     last_selected = selected;
     draw_play(1);
+    draw_music();
+    draw_difficulty();
     draw_leaderboard();
 }
 
@@ -163,6 +190,128 @@ void draw_leaderboard ()
     draw_rect(24,27,27,33, 5);
 }
 
+void draw_music ()
+{
+    int color = 6;
+    if (music_on)
+    {
+        draw_rect(4,30,8,30,color - 1);
+        draw_rect(4,26,4,30,color - 1);
+        draw_rect(8,26,8,30,color - 1);
+        draw_rect(3,25,4,26,color - 1);
+        draw_rect(7,25,8,26,color - 1);
+
+        draw_rect(5,21,7,21,color - 2);
+        draw_rect(5,17,5,21,color - 2);
+        draw_rect(4,16,5,17,color - 2);
+
+        draw_rect(13,20,17,20,color - 3);
+        draw_rect(13,16,13,20,color - 3);
+        draw_rect(13,18,17,18,color - 3);
+        draw_rect(17,16,17,20,color - 3);
+        draw_rect(12,15,13,16,color - 3);
+        draw_rect(16,15,17,16,color - 3);
+
+        draw_rect(15,13,17,13,color - 4);
+        draw_rect(15,9,15,13,color - 4);
+        draw_rect(14,8,15,9,color - 4);
+    }
+    else
+    {
+        draw_rect(4,30,8,30,color);
+        draw_rect(4,26,4,30,color);
+        draw_rect(8,26,8,30,color);
+        draw_rect(3,25,4,26,color);
+        draw_rect(7,25,8,26,color);
+
+        draw_rect(5,21,7,21,color);
+        draw_rect(5,17,5,21,color);
+        draw_rect(4,16,5,17,color);
+
+        draw_rect(13,20,17,20,color);
+        draw_rect(13,16,13,20,color);
+        draw_rect(13,18,17,18,color);
+        draw_rect(17,16,17,20,color);
+        draw_rect(12,15,13,16,color);
+        draw_rect(16,15,17,16,color);
+
+        draw_rect(15,13,17,13,color);
+        draw_rect(15,9,15,13,color);
+        draw_rect(14,8,15,9,color);
+    }
+}
+
+void draw_difficulty() {
+    int color = 6;
+
+    if (difficulty == 0) {
+        draw(24,20,color - 4); //face 1
+        draw(27,20,color - 4);
+        draw(24,18,color - 4);
+        draw(25,17,color - 4);
+        draw(26,17,color - 4);
+        draw(27,18,color - 4);
+
+        draw(24,12,color); //face 2
+        draw(27,12,color);
+        draw(24,9,color);
+        draw(25,9,color);
+        draw(26,9,color);
+        draw(27,9,color);
+
+        draw(24,5,color); //face 3
+        draw(27,5,color);
+        draw(24,2,color);
+        draw(25,3,color);
+        draw(26,3,color);
+        draw(27,2,color);
+    }
+    else if (difficulty == 1) {
+        draw(24,20,color); //face 1
+        draw(27,20,color);
+        draw(24,18,color);
+        draw(25,17,color);
+        draw(26,17,color);
+        draw(27,18,color);
+
+        draw(24,12,color - 2); //face 2
+        draw(27,12,color - 2);
+        draw(24,9,color - 2);
+        draw(25,9,color - 2);
+        draw(26,9,color - 2);
+        draw(27,9,color - 2);
+
+        draw(24,5,color); //face 3
+        draw(27,5,color);
+        draw(24,2,color);
+        draw(25,3,color);
+        draw(26,3,color);
+        draw(27,2,color);
+    }
+    else {
+        draw(24,20,color); //face 1
+        draw(27,20,color);
+        draw(24,18,color);
+        draw(25,17,color);
+        draw(26,17,color);
+        draw(27,18,color);
+
+        draw(24,12,color); //face 2
+        draw(27,12,color);
+        draw(24,9,color);
+        draw(25,9,color);
+        draw(26,9,color);
+        draw(27,9,color);
+
+        draw(24,5,color - 6); //face 3
+        draw(27,5,color - 6);
+        draw(24,2,color - 6);
+        draw(25,3,color - 6);
+        draw(26,3,color - 6);
+        draw(27,2,color - 6);
+    }
+}
+
 void draw_play_outline(uint8_t color) {
     draw_rect(1, 54, 30, 54, color);
     draw_rect(1, 35, 1, 54, color);
@@ -186,9 +335,11 @@ void draw_music_outline(uint8_t color) {
     draw_rect(11, 7, 18, 21, 7);
 }
 
-void draw_credits_outline(uint8_t color) {
+void draw_difficulty_outline(uint8_t color) {
     draw_rect(21, 0, 30, 22, color);
     draw_rect(22, 0, 29, 21, 7);
+    draw_rect(22,7,29,7,color);
+    draw_rect(22,14,29,14,color);
 }
 
 void draw_other_outline(uint8_t color) {
@@ -197,4 +348,5 @@ void draw_other_outline(uint8_t color) {
     draw_rect(2, 0, 7, 11, 7);
     draw_rect(2, 0, 18, 3, 7);
 }
+
 
