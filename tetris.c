@@ -80,7 +80,7 @@
  *
  * Tetromino Rotation:
  *
- * Collision Testing:int LFSR(int init);
+ * Collision Testing:int LFSR(int init);draw_letter
  int get_piece();
  void update_tetris();
  void initialize_game();

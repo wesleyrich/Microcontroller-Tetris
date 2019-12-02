@@ -11,6 +11,7 @@
 #include "Score.h"
 #include "led_matrix.h"
 #include "leaderboard.h"
+#include "audio.h"
 
 // Game-State is 5
 
@@ -24,7 +25,9 @@ int let_selected = 0;
 
 void initialize_gameover()
 {
-    if (getScore() < get_highscores(19))
+    stop_note();
+    int this_score = getScore();
+    if (this_score < get_highscores(19))
 
     {
         // youre a loser
@@ -73,13 +76,22 @@ void initialize_gameover()
     draw_rect(30, 58, 30, 60, 6);
     draw_rect(28, 58, 29, 58, 6);
 
+    int place = 20;
+    for (int i = 19; i >= 0; i--)
+    {
+        if (this_score > get_highscores(i))
+        {
+            place = i+1;
+        }
+    }
+
     let_selected = 0;
     let_arr[0] = 0;
     let_arr[1] = 0;
     let_arr[2] = 0;
     draw_rect(1,46,9,46,4);
     draw_rect(21,46,30,46,4);
-    draw_rank(1,16,48,6);
+    draw_rank(place,16,48,6);
     draw_score(getScore(), 27, 40, 4);
     draw_let_arr(5);
     draw_selected(6);

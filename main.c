@@ -37,7 +37,15 @@ int main(void)
 
     initialize_eeprom();
     read_and_sort();
+/*
+    for (int i = 0; i < 80; i++)
+    {
+        write_EEPROM(i*4, 0);
+        write_EEPROM((i+1)*4,0);
+    }
 
+    read_and_sort();
+*/
 	LED_pins_setup();
 	initialize_controller();
     test_audio();
