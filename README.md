@@ -1,6 +1,8 @@
 # MiniProject
-ECE 362 Mini Project Fall 2019
+ECE 362 Mini Project Fall 201
+
 Contributers: Daryl D'Abbreo, Grant Julian, and Wesley Rich
+
 Link for video https://imgur.com/a/93UD75n
 
 This is our implementation of Nintendo Entertainment System (NES) style Tetris using an STM32 microcontroller. The display is an LED matrix board, interfaced using GPIO. We used an original NES controller to control the game, which also just used GPIO. High scores were saved using an EEPROM, interfaced using I2C. The EEPROM was useful for storing high scores through power cycles. We played music for the game using digital-to-analog conversion, playing notes from a database of frequencies we created.
